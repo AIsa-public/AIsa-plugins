@@ -60,7 +60,7 @@
 
 ## 支持
 
-- 源码仓库：[github.com/AIsa-public/AIsa-plugins](https://github.com/AIsa-public/AIsa-plugins/tree/main/plugins/aisa-gtm/dify)
+- 源码仓库：[github.com/AIsa-public/AIsa-plugins/tree/main/plugins/aisa-gtm/dify](https://github.com/AIsa-public/AIsa-plugins/tree/main/plugins/aisa-gtm/dify)
 - AIsa 文档：[aisa.one/docs](https://aisa.one/docs)
 - 套餐与定价：[aisa.one/solutions/go-to-market](https://aisa.one/solutions/go-to-market)
 - 联系方式：developer@aisa.one

@@ -60,7 +60,7 @@ Tool inputs (queries, domains, keywords, URLs) are forwarded to AIsa's API to fu
 
 ## Support
 
-- Source repository: [github.com/AIsa-public/AIsa-plugins](https://github.com/AIsa-public/AIsa-plugins/tree/main/plugins/aisa-gtm/dify)
+- Source repository: [github.com/AIsa-public/AIsa-plugins/tree/main/plugins/aisa-gtm/dify](https://github.com/AIsa-public/AIsa-plugins/tree/main/plugins/aisa-gtm/dify)
 - AIsa documentation: [aisa.one/docs](https://aisa.one/docs)
 - Plan and pricing: [aisa.one/solutions/go-to-market](https://aisa.one/solutions/go-to-market)
 - Contact: developer@aisa.one
