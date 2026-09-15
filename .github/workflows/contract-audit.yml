@@ -1,0 +1,49 @@
+name: AIsa GTM contract-drift audit
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "plugins/aisa-gtm/dify/**"
+      - ".github/workflows/contract-audit.yml"
+  pull_request:
+    paths:
+      - "plugins/aisa-gtm/dify/**"
+
+defaults:
+  run:
+    working-directory: plugins/aisa-gtm/dify
+
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: pip install pyyaml
+      - name: Offline test suite
+        run: python3 tests/test_offline.py
+
+  audit:
+    # Live drift audit against the AIsa Tool Router + REST quote plane.
+    # Needs the AISA_API_KEY repo secret (read-only, free calls); runs on
+    # the weekly schedule and manual dispatch only, so ordinary pushes stay
+    # green even before the secret is configured.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: offline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Live contract audit (read-only, no credit spent)
+        env:
+          AISA_API_KEY: ${{ secrets.AISA_API_KEY }}
+        run: python3 tests/contract_audit.py
