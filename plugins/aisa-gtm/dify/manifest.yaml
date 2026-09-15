@@ -14,8 +14,8 @@ description:
   pt_BR: Dados GTM premium para agentes com uma única chave de API AIsa — inteligência de tráfego de concorrentes, pesquisa de palavras-chave e SEO, escuta social, prospecção B2B, descoberta de criadores e visibilidade em mecanismos de resposta de IA.
 icon: icon.svg
 icon_dark: icon-dark.svg
-repo: https://github.com/AIsa-team/dify-gtm-plugin-source
-contact: haoyang@aisa.one
+repo: https://github.com/AIsa-public/AIsa-plugins
+contact: developer@aisa.one
 resource:
   memory: 268435456
   permission: {}

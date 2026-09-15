@@ -159,7 +159,7 @@ def test_request_headers():
         check("User-Agent follows the RFC 9110 product-token shape",
               _re.fullmatch(
                   r"aisa-gtm-dify-plugin/\d+\.\d+\.\d+ "
-                  r"\(\+https://github\.com/AIsa-team/dify-gtm-plugin-source\)",
+                  r"\(\+https://github\.com/AIsa-public/AIsa-plugins\)",
                   captured["ua"] or "") is not None,
               f"got {captured['ua']!r}")
         c.request("POST", "/tavily/search", data={"query": "x"})
@@ -468,7 +468,7 @@ def test_yaml_wiring():
     check("manifest points at provider yaml",
           manifest["plugins"]["tools"] == ["provider/go-to-market.yaml"])
     check("manifest has required repo field",
-          manifest.get("repo", "").startswith("https://github.com/AIsa-team/"))
+          manifest.get("repo", "").startswith("https://github.com/AIsa-public/"))
     check("manifest has required contact field", "@" in manifest.get("contact", ""))
     check("manifest sets minimum_dify_version",
           isinstance(manifest["meta"].get("minimum_dify_version"), str))

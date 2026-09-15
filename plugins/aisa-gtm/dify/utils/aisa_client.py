@@ -47,7 +47,7 @@ def _plugin_version() -> str:
 # same UA (segment them via the X-AISA-Cost-Mode request header).
 USER_AGENT = (
     f"aisa-gtm-dify-plugin/{_plugin_version()} "
-    "(+https://github.com/AIsa-team/dify-gtm-plugin-source)"
+    "(+https://github.com/AIsa-public/AIsa-plugins)"
 )
 
 AUTH_HINT = (
