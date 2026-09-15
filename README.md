@@ -17,6 +17,19 @@ then produce a structured brief with direct source links.
 See [plugins/aisa-search](plugins/aisa-search) for configuration, usage,
 and validation details.
 
+### AIsa Go-to-Market (Dify)
+
+Seven tools for web research, traffic intelligence, keyword/SEO/GEO research,
+social listening, prospecting, creator discovery, and AI answer visibility.
+
+- Directory: `plugins/aisa-gtm/dify`
+- Dify identity: `aisa-team/go-to-market`
+- Version: `0.2.0`
+- Requirements: Python 3.11+ (Dify runner: Python 3.12), Dify 1.7.1+, and an AIsa API key
+- Hosts: Dify only; this bundle is not registered in the Codex or Claude Code catalogs.
+
+See [plugins/aisa-gtm](plugins/aisa-gtm) for source provenance, packaging, and tests.
+
 ## Install with Claude Code
 
 ```bash
@@ -52,6 +65,7 @@ Package it with the Dify Plugin CLI:
 
 ```bash
 dify plugin package ./plugins/aisa-search/dify
+dify plugin package ./plugins/aisa-gtm/dify -o go-to-market-0.2.0.difypkg
 ```
 
 See [plugins/aisa-search/dify](plugins/aisa-search/dify) for setup and local
@@ -64,6 +78,7 @@ debugging.
 .claude-plugin/marketplace.json      Claude Code marketplace
 plugins/aisa-search/                 Shared plugin bundle
 plugins/aisa-search/dify/            Dify-specific Tool Plugin
+plugins/aisa-gtm/dify/               Dify-specific Go-to-Market Tool Plugin
 ```
 
 The plugin contains no API keys. Set `AISA_API_KEY` in the environment that

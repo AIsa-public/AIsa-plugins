@@ -1,0 +1,672 @@
+{
+ "get_ahrefs_domain_rating": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "date",
+   "target"
+  ],
+  "required": [
+   "date",
+   "target"
+  ],
+  "schema_sha256": "2fce33aeeba3374f4a95815e4990b00c5fcf05ef67d1ef6d5abc0007c582a475"
+ },
+ "get_ahrefs_site_metrics": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "date",
+   "target"
+  ],
+  "required": [
+   "date",
+   "target"
+  ],
+  "schema_sha256": "2fce33aeeba3374f4a95815e4990b00c5fcf05ef67d1ef6d5abc0007c582a475"
+ },
+ "get_apollo_organizations_enrich": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ],
+  "schema_sha256": "043696ff4bdf46e9467d0f8a8f70bffa747129c575287d03cf6346298f270a0d"
+ },
+ "get_instagram_profile": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "handle",
+   "trim"
+  ],
+  "required": [
+   "handle"
+  ],
+  "schema_sha256": "ab074edbba5f5c018b96bc0c64bb0b587a494aa35e55939ce090cc7207ed546d"
+ },
+ "get_instagram_reels_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "date_posted",
+   "page",
+   "query"
+  ],
+  "required": [
+   "query"
+  ],
+  "schema_sha256": "1c46e5f5886040188e296f1cc4da7b6194acb30bd16897f35fc542747d808914"
+ },
+ "get_pinterest_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "cursor",
+   "query",
+   "trim"
+  ],
+  "required": [
+   "query"
+  ],
+  "schema_sha256": "f0e73ee5528e3e10dea10f872190f8a62587039cae4d9b05d06164aa576624ed"
+ },
+ "get_reddit_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "after",
+   "query",
+   "sort",
+   "timeframe",
+   "trim"
+  ],
+  "required": [
+   "query"
+  ],
+  "schema_sha256": "6b621db2e339343592bd11a6b045459d5a33041f1da94071699f930310245a8c"
+ },
+ "get_reddit_subreddit_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "cursor",
+   "query",
+   "sort",
+   "subreddit",
+   "timeframe"
+  ],
+  "required": [
+   "subreddit"
+  ],
+  "schema_sha256": "1d2234127e6d88c8c428498ccb6329feca05d4f10bbfa23616925469992cef94"
+ },
+ "get_semrush_backlinks_overview": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "target"
+  ],
+  "required": [
+   "target"
+  ],
+  "schema_sha256": "66a3801b3590daec312e836da133294cf6b8a6e084897c6f060ade8958d8c7e2"
+ },
+ "get_semrush_broad_match_keywords": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "database",
+   "phrase"
+  ],
+  "required": [
+   "phrase"
+  ],
+  "schema_sha256": "5af0dc3b8a7033f3cdfa7f13ef0b8d4031e9a601d133225a11f2296fdc35778c"
+ },
+ "get_semrush_domain_organic_keywords": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "database",
+   "domain"
+  ],
+  "required": [
+   "database",
+   "domain"
+  ],
+  "schema_sha256": "1da67f8e1d6ba3f3c29c52b5fb518d1599db008f25c6d37f8aa1b9c3c30b2473"
+ },
+ "get_semrush_domain_overview": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "database",
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ],
+  "schema_sha256": "edae51d8392322e7cc636bffed9f1648cc6334989af0968c124249369320683e"
+ },
+ "get_semrush_keyword_difficulty": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "database",
+   "phrase"
+  ],
+  "required": [
+   "phrase"
+  ],
+  "schema_sha256": "b0074a3eb2bfbf1e1f528eaaf43c21fa72fd7b930b5b78a9ba52d4e4be72997c"
+ },
+ "get_semrush_keyword_overview": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "database",
+   "phrase"
+  ],
+  "required": [
+   "phrase"
+  ],
+  "schema_sha256": "5af0dc3b8a7033f3cdfa7f13ef0b8d4031e9a601d133225a11f2296fdc35778c"
+ },
+ "get_semrush_organic_competitors": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "database",
+   "domain"
+  ],
+  "required": [
+   "database",
+   "domain"
+  ],
+  "schema_sha256": "1da67f8e1d6ba3f3c29c52b5fb518d1599db008f25c6d37f8aa1b9c3c30b2473"
+ },
+ "get_semrush_question_keywords": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "database",
+   "phrase"
+  ],
+  "required": [
+   "phrase"
+  ],
+  "schema_sha256": "5af0dc3b8a7033f3cdfa7f13ef0b8d4031e9a601d133225a11f2296fdc35778c"
+ },
+ "get_twitter_tweet_advanced_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "cursor",
+   "query",
+   "queryType"
+  ],
+  "required": [
+   "query",
+   "queryType"
+  ],
+  "schema_sha256": "388aa3eae79a3e1038cf9e1c904bd0f7f5419281e8fb5734f6c52aff82c803fa"
+ },
+ "get_twitter_user_info": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "userName"
+  ],
+  "required": [
+   "userName"
+  ],
+  "schema_sha256": "413f644fd6b5b351cb255f43eb08321e4147d3078da3c128eba0929a4935839e"
+ },
+ "get_youtube_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "engine",
+   "gl",
+   "hl",
+   "q",
+   "sp"
+  ],
+  "required": [
+   "engine",
+   "q"
+  ],
+  "schema_sha256": "44b0167d79ecfef39031325a5a92cfcf890525952cba46959ca0f1d6eba97ec5"
+ },
+ "post_apollo_mixed_companies_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "currently_using_any_of_technology_uids[]",
+   "latest_funding_amount_range[max]",
+   "latest_funding_amount_range[min]",
+   "latest_funding_date_range[max]",
+   "latest_funding_date_range[min]",
+   "organization_ids[]",
+   "organization_job_locations[]",
+   "organization_job_posted_at_range[max]",
+   "organization_job_posted_at_range[min]",
+   "organization_locations[]",
+   "organization_not_locations[]",
+   "organization_num_employees_ranges[]",
+   "organization_num_jobs_range[max]",
+   "organization_num_jobs_range[min]",
+   "page",
+   "per_page",
+   "q_organization_domains_list[]",
+   "q_organization_job_titles[]",
+   "q_organization_keyword_tags[]",
+   "q_organization_name",
+   "revenue_range[max]",
+   "revenue_range[min]",
+   "total_funding_range[max]",
+   "total_funding_range[min]"
+  ],
+  "required": [],
+  "schema_sha256": "7fc1f0bb6a8172a2c64281f68c020dfad712d39752a651eba5a7b2e72b33eda7"
+ },
+ "post_apollo_mixed_people_api_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "contact_email_status[]",
+   "currently_not_using_any_of_technology_uids[]",
+   "currently_using_all_of_technology_uids[]",
+   "currently_using_any_of_technology_uids[]",
+   "include_similar_titles",
+   "organization_ids[]",
+   "organization_job_locations[]",
+   "organization_job_posted_at_range[max]",
+   "organization_job_posted_at_range[min]",
+   "organization_locations[]",
+   "organization_num_employees_ranges[]",
+   "organization_num_jobs_range[max]",
+   "organization_num_jobs_range[min]",
+   "page",
+   "per_page",
+   "person_locations[]",
+   "person_seniorities[]",
+   "person_titles[]",
+   "q_keywords",
+   "q_organization_domains_list[]",
+   "q_organization_job_titles[]",
+   "revenue_range[max]",
+   "revenue_range[min]"
+  ],
+  "required": [],
+  "schema_sha256": "6a8c5e52054057095d1f70c86767c4856ff59620a9f81a8d8d51070b6c4f2fb8"
+ },
+ "post_apollo_organizations_bulk_enrich": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "domains[]"
+  ],
+  "required": [
+   "domains[]"
+  ],
+  "schema_sha256": "59f6cba499a13340f034a81617e80cd598193695f18adfe24745cfc5563b1428"
+ },
+ "post_dataforseo_ai_keyword_volume_live": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "body"
+  ],
+  "required": [
+   "body"
+  ],
+  "schema_sha256": "5a34f82d235e09884f2bf5546f631ebeb5fae0bebbf60b2fbdc8f30cfa558c4c"
+ },
+ "post_dataforseo_keywords_gads_search_volume_live": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "body"
+  ],
+  "required": [
+   "body"
+  ],
+  "schema_sha256": "f57ec441e238f6c02d75444029d7b116f27c684328067ac28516558f0be22430"
+ },
+ "post_dataforseo_labs_google_keyword_suggestions_live": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "body"
+  ],
+  "required": [
+   "body"
+  ],
+  "schema_sha256": "f4d26f0471dc60ad86d64e4d0740c4f651ba05af456d05e20b816e30fe93d97b"
+ },
+ "post_firecrawl_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "limit",
+   "query"
+  ],
+  "required": [
+   "query"
+  ],
+  "schema_sha256": "840b2174f16d1ddfbaead758c7bb88f3dacad902177b976d6168015e7cc9c183"
+ },
+ "post_oxylabs_ai_search": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "geo_location",
+   "parse",
+   "prompt",
+   "query",
+   "render",
+   "search",
+   "source"
+  ],
+  "required": [
+   "source"
+  ],
+  "schema_sha256": "4d6cd7f7178accdb210aef8efb77edf5d5005520de01a81301ae17ad97eb3130"
+ },
+ "post_tavily_crawl": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "allow_external",
+   "chunks_per_source",
+   "exclude_domains",
+   "exclude_paths",
+   "extract_depth",
+   "format",
+   "include_favicon",
+   "include_images",
+   "include_usage",
+   "instructions",
+   "limit",
+   "max_breadth",
+   "max_depth",
+   "select_domains",
+   "select_paths",
+   "timeout",
+   "url"
+  ],
+  "required": [
+   "url"
+  ],
+  "schema_sha256": "cc8dc8a79cbaa713e41b9d7a9f5beeac219b807b03a48c42eef4322f291496d4"
+ },
+ "post_tavily_extract": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "chunks_per_source",
+   "extract_depth",
+   "format",
+   "include_favicon",
+   "include_images",
+   "include_usage",
+   "query",
+   "timeout",
+   "urls"
+  ],
+  "required": [
+   "urls"
+  ],
+  "schema_sha256": "77aea356d46ac9ab25e6c66657994f77fea87bab5d673897959ae8395eb58725"
+ },
+ "post_tavily_map": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "allow_external",
+   "exclude_domains",
+   "exclude_paths",
+   "include_usage",
+   "instructions",
+   "limit",
+   "max_breadth",
+   "max_depth",
+   "select_domains",
+   "select_paths",
+   "timeout",
+   "url"
+  ],
+  "required": [
+   "url"
+  ],
+  "schema_sha256": "01c1bd3dfbdc6fea158fd0adb5e21e3dd1e97160362df1cfc1887c0acc04b5bd"
+ },
+ "post_tavily_search": {
+  "pitfalls_sha256": "22c8692efa8caa0161d285e6d2d9efab9cfdbad0404c6b396af7e236f5e09e15",
+  "properties": [
+   "auto_parameters",
+   "chunks_per_source",
+   "country",
+   "end_date",
+   "exclude_domains",
+   "include_answer",
+   "include_domains",
+   "include_favicon",
+   "include_image_descriptions",
+   "include_images",
+   "include_raw_content",
+   "include_usage",
+   "max_results",
+   "query",
+   "safe_search",
+   "search_depth",
+   "start_date",
+   "time_range",
+   "topic"
+  ],
+  "required": [
+   "query"
+  ],
+  "schema_sha256": "3841d744671e63669d7576c503712f31b92df5baabbe597bf8b9b5e5c4f34bef"
+ },
+ "post_waveinflu_email_lookup": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "url"
+  ],
+  "required": [
+   "url"
+  ],
+  "schema_sha256": "b71523ab3b9a6e8a90d775f80601a3933fde4093cd84ac91db6d2832127fa38d"
+ },
+ "post_waveinflu_similar_creators": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "contentDirection",
+   "filters",
+   "limit",
+   "platform",
+   "seedProfileUrl"
+  ],
+  "required": [
+   "platform"
+  ],
+  "schema_sha256": "8b7427377f186853a293ad46997ab946da7a88e1818ecd9d24f93b8de6e327e4"
+ },
+ "similarwebDemographics": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "format",
+   "granularity",
+   "main_domain_only",
+   "start_date",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "granularity",
+   "start_date"
+  ],
+  "schema_sha256": "8afc900cb41b97d8a969db975c865bfee30840d30e3f3a3c91f2c6ec5b92b35b"
+ },
+ "similarwebKeywordCompetitors": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "offset",
+   "start_date",
+   "traffic_source",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "b1b445e91f0c1917ded1d7827d54cfec5cb263606025fba0683e3b4e4c50e226"
+ },
+ "similarwebLandingPages": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "offset",
+   "start_date",
+   "traffic_source",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "b1b445e91f0c1917ded1d7827d54cfec5cb263606025fba0683e3b4e4c50e226"
+ },
+ "similarwebPopularPages": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "offset",
+   "start_date",
+   "traffic_source",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "b1b445e91f0c1917ded1d7827d54cfec5cb263606025fba0683e3b4e4c50e226"
+ },
+ "similarwebRanking": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "main_domain_only",
+   "start_date",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "start_date"
+  ],
+  "schema_sha256": "60119da7571f0cc07703220e2f4e99cb6febe195f61b8346b51e0e5ea7c09288"
+ },
+ "similarwebSimilarSites": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "offset",
+   "start_date",
+   "traffic_source",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "96aee8a2cb7b8ff53f4dd2928c3fd447386be3d189b7cab866b784716fd3b963"
+ },
+ "similarwebTechnologies": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "format",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "start_date",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "dea2efb717904023121221edb19a082c442f6b2b3885d17a847cff131997d075"
+ },
+ "similarwebTrafficEngagement": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "main_domain_only",
+   "metrics",
+   "mtd",
+   "start_date",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "metrics",
+   "start_date"
+  ],
+  "schema_sha256": "b24976c42b61a8344f4190a8d2486407f8c51b0570f17276742804a98af1e567"
+ },
+ "similarwebWebsiteTopGeographies": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ],
+  "schema_sha256": "72f133153b40701b6d89317645e180478b73dd2cbd31d7623e7d5656a976736e"
+ },
+ "similarwebWebsiteTrafficSnapshot": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ],
+  "schema_sha256": "f2cfd4016ed9ef55b8de04afa129628c67498cb7bb537a5b5d393a8f9102428b"
+ },
+ "similarwebWebsiteTrafficTrend": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ],
+  "schema_sha256": "f2cfd4016ed9ef55b8de04afa129628c67498cb7bb537a5b5d393a8f9102428b"
+ }
+}

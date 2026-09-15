@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -8,6 +9,23 @@ PLUGIN_ROOT = REPO_ROOT / "plugins" / "aisa-search"
 
 
 class ManifestTests(unittest.TestCase):
+    def test_gtm_dify_identity_and_version_match(self):
+        root = REPO_ROOT / "plugins" / "aisa-gtm"
+        manifest = (root / "dify" / "manifest.yaml").read_text(encoding="utf-8")
+        project = (root / "dify" / "pyproject.toml").read_text(encoding="utf-8")
+        version = re.search(r"^version: (\S+)$", manifest, re.MULTILINE).group(1)
+        name = re.search(r"^name: (\S+)$", manifest, re.MULTILINE).group(1)
+        self.assertEqual(name, "go-to-market")
+        self.assertIn('name = "{}"'.format(name), project)
+        self.assertIn('version = "{}"'.format(version), project)
+        self.assertIn("Dify-only", (root / "README.md").read_text(encoding="utf-8"))
+        for catalog_path in (
+            REPO_ROOT / ".agents" / "plugins" / "marketplace.json",
+            REPO_ROOT / ".claude-plugin" / "marketplace.json",
+        ):
+            names = {plugin["name"] for plugin in self.load_json(catalog_path)["plugins"]}
+            self.assertTrue(names.isdisjoint({"aisa-gtm", name}))
+
     def load_json(self, path):
         with path.open(encoding="utf-8") as handle:
             return json.load(handle)
