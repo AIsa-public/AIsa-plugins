@@ -78,13 +78,21 @@ static price list (upstream prices move; the quote is the only truth):
 - Domains: bare, no protocol/path — "linear.app", never "https://linear.app/pricing".
 - traffic_intel.metric — exactly one of: overview | trend | engagement | ranking |
   geographies | demographics | similar_sites | technologies | popular_pages |
-  domain_authority. LEAVE start_date/end_date EMPTY — the tool anchors valid
-  date windows automatically (similar_sites self-corrects to Similarweb's
-  latest published window).
+  keyword_competitors | landing_pages | domain_authority. LEAVE
+  start_date/end_date EMPTY — the tool anchors valid date windows
+  automatically and self-corrects rejected windows.
 - keyword_seo_geo.metric — keyword_overview | keyword_difficulty | keyword_suggestions |
-  search_volume | domain_keywords | domain_competitors | backlinks_overview.
-  keyword_difficulty: up to 20 keywords, ';'-separated. search_volume: up to
-  100, ','-separated. keyword_suggestions: ONE seed keyword.
+  search_volume | ai_search_volume | question_keywords | broad_match |
+  domain_keywords | domain_competitors | backlinks_overview | domain_overview.
+  keyword_difficulty: up to 20 keywords, ';'-separated. search_volume and
+  ai_search_volume: up to 100, ','-separated. keyword_suggestions,
+  question_keywords, broad_match: ONE seed keyword.
+- GEO vs visibility — two different questions; never substitute one for the
+  other: keyword_seo_geo(ai_search_volume) = how OFTEN people put these
+  keywords to AI assistants (demand — a number per keyword, with history).
+  ai_visibility = what one engine actually ANSWERS for one prompt (presence —
+  which brands, in what order). "Do we show up in ChatGPT?" -> ai_visibility.
+  "Which topics do people ask AI about?" -> ai_search_volume.
 - country: 2-letter code or full name ("de" or "Germany"). 30+ markets have
   localized keyword data; unsupported markets fall back to global — say so
   when it happens. Similarweb traffic supports only "us" or worldwide.
@@ -93,13 +101,16 @@ static price list (upstream prices move; the quote is the only truth):
   silently). mode 'profile' only for x/instagram and needs handle WITHOUT '@'.
   Optional subreddit without 'r/' scopes a Reddit search.
 - find_prospects: job_titles and locations ','-separated; company_size as
-  "min-max" ranges, e.g. "11-50, 51-200"; enrich_company needs a bare domain.
+  "min-max" ranges, e.g. "11-50, 51-200"; enrich_company needs one bare
+  domain; enrich_bulk takes up to 10 ','-separated domains in ONE call —
+  always prefer it over repeated enrich_company calls.
 - find_creators: profile_url is a FULL URL (https://www.youtube.com/@name);
   platform (youtube|tiktok) must match the URL; run email lookup only for
   agreed top picks.
-- ai_visibility: source is one of chatgpt | gemini | perplexity |
-  google_ai_mode | google_search. Phrase the prompt as a real buyer would.
-  Keep prompts under 4000 characters.
+- ai_visibility: source is one of chatgpt | gemini | perplexity | claude |
+  google_ai_mode | google_search — six engines, ALL available; never claim
+  one is unsupported. Phrase the prompt as a real buyer would. Keep prompts
+  under 4000 characters.
 
 Example of a correct call:
 find_prospects(search_type="people", job_titles="Head of Growth, VP Marketing",
@@ -135,16 +146,23 @@ Degrade with disclosure, never silently substitute:
 Pick the playbook matching the request; compose them for a full GTM plan.
 
 ## 1. Competitor / market teardown — "tear down X", "who competes with us"
-1. traffic_intel(domain, metric=engagement) — size the traffic (visits +
-   pages_per_visit, cheap). metric=overview is richer but quotes above the
-   default approval threshold — offer it, don't default to it.
-2. traffic_intel(metric=similar_sites) — the competitive set.
+1. keyword_seo_geo(metric=domain_overview, domain) — cheapest possible sizing
+   probe (rank, organic keywords, traffic cost). Then traffic_intel(domain,
+   metric=engagement) for visits + pages_per_visit. metric=overview is richer
+   but quotes above the default approval threshold — offer it, don't default
+   to it.
+2. traffic_intel(metric=similar_sites) — the competitive set by traffic.
 3. traffic_intel(metric=geographies) — where the audience lives.
-4. keyword_seo_geo(metric=domain_competitors, domain) — organic-search rivals
-   (often differ from traffic rivals; note the difference). Call once only.
-5. For the top 2-3 competitors found: traffic_intel(metric=engagement) each.
+4. keyword_seo_geo(metric=domain_competitors, domain) — organic-search rivals;
+   or traffic_intel(metric=keyword_competitors) for Similarweb's view of
+   search rivals. The two often disagree with each other AND with traffic
+   rivals — noting the differences is analysis gold. Call each once only.
+5. For the top 2-3 competitors found: keyword_seo_geo(metric=domain_overview)
+   each — cheap comparative sizing.
 6. Optional depth: web_research(mode=extract, urls=<pricing pages>) for
-   positioning; traffic_intel(metric=technologies) for stack.
+   positioning; traffic_intel(metric=technologies) for stack;
+   traffic_intel(metric=landing_pages) to see where a rival's search traffic
+   actually lands.
 Deliver: market map (who, how big, where), positioning notes, one "so what"
 per competitor.
 
@@ -155,10 +173,17 @@ per competitor.
 3. keyword_seo_geo(metric=keyword_difficulty, keyword=<shortlist,
    semicolon-separated, max 20>, country=<market>) — priced per keyword:
    ONE batched call.
-4. keyword_seo_geo(metric=domain_keywords, domain=<ours or a rival's>) — find gaps.
+4. keyword_seo_geo(metric=ai_search_volume, keyword=<same shortlist,
+   comma-separated>) — the GEO layer: which of these topics people also put
+   to AI assistants. High AI volume + weak classic volume = content the
+   engines will cite before the SERPs reward it.
+5. keyword_seo_geo(metric=question_keywords, keyword=<seed>) — question-form
+   keywords for FAQ/AI-answer content; metric=broad_match widens a seed.
+6. keyword_seo_geo(metric=domain_keywords, domain=<ours or a rival's>) — find gaps.
 Repeat per target market when comparing; difficulty differs by country — call
 out arbitrage (keywords easier to win in one market than another).
-Deliver: keyword → volume → difficulty → intent → verdict table + 3 content plays.
+Deliver: keyword → volume → AI volume → difficulty → intent → verdict table
++ 3 content plays (flag which ones target AI answers vs classic SERPs).
 
 ## 3. Launch & brand listening — "who's talking about X"
 1. social_listening(platform=x, query=<brand>).
@@ -174,7 +199,8 @@ with reach; one recommended response action.
 2. find_prospects(search_type=people, job_titles="A, B", locations="X, Y",
    company_size="11-50, 51-200", keywords=...) — or search_type=companies when
    accounts come first.
-3. find_prospects(search_type=enrich_company, domain=...) on top accounts.
+3. find_prospects(search_type=enrich_bulk, domain="a.com, b.com, ...") — up
+   to 10 top accounts enriched in ONE call (enrich_company for a single one).
 Deliver: ranked list (name, title, company, location, why-them), the ICP used,
 a first-touch angle per segment. Flag that contact data is for the user's own
 compliant outreach.
@@ -189,13 +215,15 @@ Deliver: shortlist with fit rationale, contact emails for the top-N, a collab
 angle per creator.
 
 ## 6. AI visibility audit — "does ChatGPT recommend us"
-1. Write 2-4 buyer-style prompts ("best X for Y").
-2. ai_visibility(prompt, source=chatgpt), then perplexity and/or
+1. Optional demand check first: keyword_seo_geo(metric=ai_search_volume,
+   keyword=<topic list>) — audit the prompts people actually ask AI about.
+2. Write 2-4 buyer-style prompts ("best X for Y").
+3. ai_visibility(prompt, source=chatgpt), then claude, perplexity and/or
    google_ai_mode — engines disagree; one source is not an audit. Cheap
    but slow (~2 min each) — set expectations on time.
-3. Parse: is the brand present, at what rank, framed how, and which
+4. Parse: is the brand present, at what rank, framed how, and which
    competitors appear instead?
-4. Baseline: ai_visibility(source=google_search).
+5. Baseline: ai_visibility(source=google_search).
 Deliver: presence matrix (engine × prompt), competitor share of voice, 2-3 GEO
 actions. Present results as a snapshot — answers vary run to run.
 
@@ -206,9 +234,10 @@ data appendix behind it.
 
 # Gotchas
 
-- keyword_overview always serves the US database (upstream limitation — it
-  ignores country). For localized volumes use search_volume; for localized
-  ideas use keyword_suggestions.
+- keyword_overview and domain_overview always serve the US database (upstream
+  limitation — they ignore country). For localized volumes use search_volume;
+  for localized ideas use keyword_suggestions. question_keywords and
+  broad_match DO accept country.
 
 - Leave traffic_intel dates empty: the tool auto-anchors valid windows,
   including similar_sites' strict "latest 3 published months" rule. Report
