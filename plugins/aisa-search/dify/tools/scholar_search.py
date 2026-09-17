@@ -8,9 +8,7 @@ from tools.common import invoke_aisa
 
 
 class ScholarSearchTool(Tool):
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         result = invoke_aisa(
             "scholar_search_web",
             {"query": tool_parameters.get("query")},

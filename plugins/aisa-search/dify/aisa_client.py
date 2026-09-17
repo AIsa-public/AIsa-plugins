@@ -72,13 +72,9 @@ def _validate_public_url(raw_url: Any) -> None:
         raise ClientError(EXIT_INPUT, "invalid_input", "Extract URLs must be strings.")
     parsed = parse.urlsplit(raw_url)
     if parsed.scheme not in {"http", "https"} or not parsed.hostname:
-        raise ClientError(
-            EXIT_INPUT, "invalid_input", "Extract URLs must use HTTP or HTTPS."
-        )
+        raise ClientError(EXIT_INPUT, "invalid_input", "Extract URLs must use HTTP or HTTPS.")
     if parsed.username or parsed.password:
-        raise ClientError(
-            EXIT_INPUT, "invalid_input", "Credential-bearing URLs are not allowed."
-        )
+        raise ClientError(EXIT_INPUT, "invalid_input", "Credential-bearing URLs are not allowed.")
     hostname = parsed.hostname.lower().rstrip(".")
     if hostname == "localhost" or hostname.endswith((".localhost", ".local")):
         raise ClientError(
@@ -142,7 +138,8 @@ def validate_base_url(base_url: str) -> str:
         raise ClientError(
             EXIT_INPUT,
             "invalid_config",
-            "AISA_BASE_URL must be an HTTP(S) origin without credentials, path, query, or fragment.",
+            "AISA_BASE_URL must be an HTTP(S) origin without credentials, path, query, "
+            "or fragment.",
         )
     return value
 
@@ -217,9 +214,7 @@ def build_request(
 def _read_limited(response: Any) -> bytes:
     body = response.read(MAX_RESPONSE_BYTES + 1)
     if len(body) > MAX_RESPONSE_BYTES:
-        raise ClientError(
-            EXIT_UPSTREAM, "response_too_large", "AIsa response exceeded 5 MiB."
-        )
+        raise ClientError(EXIT_UPSTREAM, "response_too_large", "AIsa response exceeded 5 MiB.")
     return body
 
 

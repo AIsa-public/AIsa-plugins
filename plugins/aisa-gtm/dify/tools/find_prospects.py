@@ -5,7 +5,11 @@ from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
 
 from utils.aisa_client import (
-    AisaApiError, AisaApprovalRequired, AisaClient, generic_summary, truncate_payload,
+    AisaApiError,
+    AisaApprovalRequired,
+    AisaClient,
+    generic_summary,
+    truncate_payload,
 )
 from utils.gtm_common import CostGuard
 
@@ -29,16 +33,16 @@ def _size_ranges(raw: Any) -> List[str]:
 class FindProspectsTool(Tool):
     """B2B prospecting via Apollo — people search, company search, company enrichment."""
 
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         search_type = str(tool_parameters.get("search_type") or "people").strip().lower()
         keywords = str(tool_parameters.get("keywords") or "").strip()
         job_titles = _split(tool_parameters.get("job_titles"))
         locations = _split(tool_parameters.get("locations"))
         company_sizes = _size_ranges(tool_parameters.get("company_size"))
         domain = str(tool_parameters.get("domain") or "").strip()
-        domain = domain.removeprefix("https://").removeprefix("http://").strip("/").removeprefix("www.")
+        domain = (
+            domain.removeprefix("https://").removeprefix("http://").strip("/").removeprefix("www.")
+        )
 
         if search_type not in _SEARCH_TYPES:
             yield self._error(
@@ -67,7 +71,9 @@ class FindProspectsTool(Tool):
         try:
             client = AisaClient(self.runtime.credentials.get("aisa_api_key", ""))
             # Quote-first cost gate — see AisaClient._enforce_cost_guard.
-            client.set_cost_guard(CostGuard.from_params("find_prospects", search_type, tool_parameters))
+            client.set_cost_guard(
+                CostGuard.from_params("find_prospects", search_type, tool_parameters)
+            )
             if search_type == "people":
                 params: dict[str, Any] = {"per_page": 10, "page": 1}
                 if job_titles:
@@ -80,9 +86,7 @@ class FindProspectsTool(Tool):
                     params["organization_num_employees_ranges[]"] = company_sizes
                 if domain:
                     params["q_organization_domains_list[]"] = [domain]
-                result = client.request(
-                    "POST", "/apollo/mixed_people/api_search", params=params
-                )
+                result = client.request("POST", "/apollo/mixed_people/api_search", params=params)
             elif search_type == "companies":
                 params = {"per_page": 10, "page": 1}
                 if keywords:
@@ -93,17 +97,18 @@ class FindProspectsTool(Tool):
                     params["organization_num_employees_ranges[]"] = company_sizes
                 if domain:
                     params["q_organization_domains_list[]"] = [domain]
-                result = client.request(
-                    "POST", "/apollo/mixed_companies/search", params=params
-                )
+                result = client.request("POST", "/apollo/mixed_companies/search", params=params)
             elif search_type == "enrich_bulk":
                 domains = [
-                    d.removeprefix("https://").removeprefix("http://")
-                     .strip("/").removeprefix("www.")
+                    d.removeprefix("https://")
+                    .removeprefix("http://")
+                    .strip("/")
+                    .removeprefix("www.")
                     for d in _split(domain)
                 ][:10]
                 result = client.request(
-                    "POST", "/apollo/organizations/bulk_enrich",
+                    "POST",
+                    "/apollo/organizations/bulk_enrich",
                     params={"domains[]": domains},
                 )
             else:  # enrich_company
@@ -129,6 +134,4 @@ class FindProspectsTool(Tool):
         )
 
     def _error(self, message: str) -> ToolInvokeMessage:
-        return self.create_json_message(
-            {"error": {"code": "INVALID_INPUT", "message": message}}
-        )
+        return self.create_json_message({"error": {"code": "INVALID_INPUT", "message": message}})

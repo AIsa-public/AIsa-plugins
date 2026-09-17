@@ -43,13 +43,9 @@ class ClientTests(unittest.TestCase):
             DEFAULT_BASE_URL,
             "dify",
         )
-        self.assertEqual(
-            request_value.full_url, "https://api.aisa.one/apis/v1/tavily/search"
-        )
+        self.assertEqual(request_value.full_url, "https://api.aisa.one/apis/v1/tavily/search")
         self.assertEqual(request_value.get_header("Authorization"), "Bearer fake-key")
-        self.assertEqual(
-            request_value.get_header("User-agent"), "dify/aisa-search/0.1.2"
-        )
+        self.assertEqual(request_value.get_header("User-agent"), "dify/aisa-search/0.1.2")
         self.assertEqual(json.loads(request_value.data), {"query": "dify plugins"})
 
     def test_parses_one_to_three_public_urls(self) -> None:

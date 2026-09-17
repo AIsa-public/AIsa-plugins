@@ -5,7 +5,11 @@ from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
 
 from utils.aisa_client import (
-    AisaApiError, AisaApprovalRequired, AisaClient, generic_summary, truncate_payload,
+    AisaApiError,
+    AisaApprovalRequired,
+    AisaClient,
+    generic_summary,
+    truncate_payload,
 )
 from utils.gtm_common import CostGuard, normalize_country
 
@@ -83,16 +87,16 @@ def _first_model(models_resp: Dict[str, Any]) -> Optional[str]:
 class AiVisibilityTool(Tool):
     """AI answer-engine visibility (GEO/AEO) across six engines via two providers."""
 
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         prompt = str(tool_parameters.get("prompt") or "").strip()
         source = str(tool_parameters.get("source") or "chatgpt").strip().lower()
         geo_location = str(tool_parameters.get("geo_location") or "").strip()
         model = str(tool_parameters.get("model") or "").strip()
 
         if not prompt:
-            yield self._error("The 'prompt' parameter is required — the question to ask the AI engine.")
+            yield self._error(
+                "The 'prompt' parameter is required — the question to ask the AI engine."
+            )
             return
         if source not in _SOURCES:
             yield self._error(f"Unknown source '{source}'. Use one of: {', '.join(_SOURCES)}.")
@@ -112,8 +116,7 @@ class AiVisibilityTool(Tool):
             return
         except AisaApiError as e:
             yield self.create_json_message(
-                {"error": {"code": e.code,
-                           "message": enrich_upstream_error(source, e.message)}}
+                {"error": {"code": e.code, "message": enrich_upstream_error(source, e.message)}}
             )
             return
 
@@ -134,8 +137,11 @@ class AiVisibilityTool(Tool):
         chosen = model or _DEFAULT_MODELS[source]
         try:
             resp = client.request(
-                "POST", path, data=_dfs_body(source, prompt, chosen, geo_iso),
-                timeout=110, retries=0,
+                "POST",
+                path,
+                data=_dfs_body(source, prompt, chosen, geo_iso),
+                timeout=110,
+                retries=0,
             )
             return _dfs_result(resp)
         except AisaApprovalRequired:
@@ -145,28 +151,31 @@ class AiVisibilityTool(Tool):
                 raise
             # Model catalog rotated: refresh from the free models endpoint, retry once.
             models = client.request(
-                "GET", f"/dataforseo/ai_optimization/{engine}/llm_responses/models",
-                timeout=30, retries=0,
+                "GET",
+                f"/dataforseo/ai_optimization/{engine}/llm_responses/models",
+                timeout=30,
+                retries=0,
             )
             fallback = _first_model(models)
             if not fallback or fallback == chosen:
                 raise
             resp = client.request(
-                "POST", path, data=_dfs_body(source, prompt, fallback, geo_iso),
-                timeout=110, retries=0,
+                "POST",
+                path,
+                data=_dfs_body(source, prompt, fallback, geo_iso),
+                timeout=110,
+                retries=0,
             )
             out = _dfs_result(resp)
             out["model_fallback"] = f"default '{chosen}' rejected; used '{fallback}'"
             return out
 
     def _invoke_google(self, client, source, prompt, geo_location):
-        body: Dict[str, Any] = {"source": source, "parse": True,
-                                "query": prompt, "render": "html"}
+        body: Dict[str, Any] = {"source": source, "parse": True, "query": prompt, "render": "html"}
         if geo_location:
             body["geo_location"] = geo_location
         try:
-            return client.request("POST", "/oxylabs/ai-search", data=body,
-                                  timeout=110, retries=0)
+            return client.request("POST", "/oxylabs/ai-search", data=body, timeout=110, retries=0)
         except AisaApprovalRequired:
             raise  # cost gate, not an upstream failure — no fallback
         except AisaApiError as e:
@@ -179,14 +188,15 @@ class AiVisibilityTool(Tool):
             if geo_location:
                 task["location_name"] = geo_location
             resp = client.request(
-                "POST", "/dataforseo/serp/google/ai_mode/live/advanced",
-                data=[task], timeout=110, retries=0,
+                "POST",
+                "/dataforseo/serp/google/ai_mode/live/advanced",
+                data=[task],
+                timeout=110,
+                retries=0,
             )
             out = _dfs_result(resp)
             out["provider_fallback"] = "oxylabs unavailable; served via dataforseo"
             return out
 
     def _error(self, message: str) -> ToolInvokeMessage:
-        return self.create_json_message(
-            {"error": {"code": "INVALID_INPUT", "message": message}}
-        )
+        return self.create_json_message({"error": {"code": "INVALID_INPUT", "message": message}})

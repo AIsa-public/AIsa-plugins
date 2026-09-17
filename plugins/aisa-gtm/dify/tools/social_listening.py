@@ -5,7 +5,11 @@ from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
 
 from utils.aisa_client import (
-    AisaApiError, AisaApprovalRequired, AisaClient, generic_summary, truncate_payload,
+    AisaApiError,
+    AisaApprovalRequired,
+    AisaClient,
+    generic_summary,
+    truncate_payload,
 )
 from utils.gtm_common import CostGuard
 
@@ -16,9 +20,7 @@ _PROFILE_PLATFORMS = ("x", "instagram")
 class SocialListeningTool(Tool):
     """Read-only social listening across X, Reddit, Instagram, Pinterest, YouTube."""
 
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         platform = str(tool_parameters.get("platform") or "").strip().lower()
         mode = str(tool_parameters.get("mode") or "search").strip().lower()
         query = str(tool_parameters.get("query") or "").strip()
@@ -52,7 +54,9 @@ class SocialListeningTool(Tool):
         try:
             client = AisaClient(self.runtime.credentials.get("aisa_api_key", ""))
             # Quote-first cost gate — see AisaClient._enforce_cost_guard.
-            client.set_cost_guard(CostGuard.from_params("social_listening", platform, tool_parameters))
+            client.set_cost_guard(
+                CostGuard.from_params("social_listening", platform, tool_parameters)
+            )
             if platform == "x":
                 if mode == "profile":
                     result = client.request(
@@ -60,24 +64,28 @@ class SocialListeningTool(Tool):
                     )
                 else:
                     result = client.request(
-                        "GET", "/twitter/tweet/advanced_search",
+                        "GET",
+                        "/twitter/tweet/advanced_search",
                         params={"query": query, "queryType": "Latest"},
                     )
             elif platform == "reddit":
                 if subreddit:
                     result = client.request(
-                        "GET", "/reddit/subreddit/search",
+                        "GET",
+                        "/reddit/subreddit/search",
                         params={"subreddit": subreddit, "query": query, "sort": "relevance"},
                     )
                 else:
                     result = client.request(
-                        "GET", "/reddit/search",
+                        "GET",
+                        "/reddit/search",
                         params={"query": query, "sort": "relevance", "trim": "true"},
                     )
             elif platform == "instagram":
                 if mode == "profile":
                     result = client.request(
-                        "GET", "/instagram/profile",
+                        "GET",
+                        "/instagram/profile",
                         params={"handle": handle, "trim": "true"},
                     )
                 else:
@@ -103,7 +111,10 @@ class SocialListeningTool(Tool):
         result = truncate_payload(result, max_field_chars=3000)
         subject = handle if mode == "profile" else query
         payload: dict[str, Any] = {
-            "platform": platform, "mode": mode, "subject": subject, "result": result,
+            "platform": platform,
+            "mode": mode,
+            "subject": subject,
+            "result": result,
         }
         cost = client.cost_disclosure()
         if cost:
@@ -114,6 +125,4 @@ class SocialListeningTool(Tool):
         )
 
     def _error(self, message: str) -> ToolInvokeMessage:
-        return self.create_json_message(
-            {"error": {"code": "INVALID_INPUT", "message": message}}
-        )
+        return self.create_json_message({"error": {"code": "INVALID_INPUT", "message": message}})

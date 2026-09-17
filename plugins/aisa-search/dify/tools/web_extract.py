@@ -9,9 +9,7 @@ from tools.common import invoke_aisa
 
 
 class WebExtractTool(Tool):
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         try:
             urls = parse_extract_urls(tool_parameters.get("urls"))
         except ClientError as exc:

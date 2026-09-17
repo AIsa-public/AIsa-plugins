@@ -57,7 +57,14 @@ SENT = {
     "similarwebWebsiteTopGeographies": {"domain"},
     "similarwebDemographics": {"domain", "start_date", "end_date", "granularity", "country"},
     "similarwebSimilarSites": {"domain", "start_date", "end_date", "limit", "country"},
-    "similarwebTechnologies": {"domain", "start_date", "end_date", "granularity", "limit", "country"},
+    "similarwebTechnologies": {
+        "domain",
+        "start_date",
+        "end_date",
+        "granularity",
+        "limit",
+        "country",
+    },
     "similarwebPopularPages": {"domain", "start_date", "end_date", "limit", "country"},
     "similarwebKeywordCompetitors": {"domain", "start_date", "end_date", "limit", "country"},
     "similarwebLandingPages": {"domain", "start_date", "end_date", "limit", "country"},
@@ -67,13 +74,15 @@ SENT = {
     "get_semrush_keyword_difficulty": {"phrase", "database"},
     "get_semrush_question_keywords": {"phrase", "database"},
     "get_semrush_broad_match_keywords": {"phrase", "database"},
-    "get_semrush_domain_overview": {"domain"},  # database rejected by gateway (like keyword_overview)
+    "get_semrush_domain_overview": {
+        "domain"
+    },  # database rejected by gateway (like keyword_overview)
     "get_semrush_domain_organic_keywords": {"domain", "database"},
     "get_semrush_organic_competitors": {"domain", "database"},
     "get_semrush_backlinks_overview": {"target"},
-    "post_dataforseo_labs_google_keyword_suggestions_live": set(),   # array body
-    "post_dataforseo_keywords_gads_search_volume_live": set(),       # array body
-    "post_dataforseo_ai_keyword_volume_live": set(),                 # array body
+    "post_dataforseo_labs_google_keyword_suggestions_live": set(),  # array body
+    "post_dataforseo_keywords_gads_search_volume_live": set(),  # array body
+    "post_dataforseo_ai_keyword_volume_live": set(),  # array body
     "get_twitter_tweet_advanced_search": {"query", "queryType"},
     "get_twitter_user_info": {"userName"},
     "get_reddit_search": {"query", "sort", "trim"},
@@ -82,18 +91,37 @@ SENT = {
     "get_instagram_profile": {"handle", "trim"},
     "get_pinterest_search": {"query", "trim"},
     "get_youtube_search": {"engine", "q"},
-    "post_apollo_mixed_people_api_search": {"person_titles[]", "q_keywords", "person_locations[]",
-                                            "organization_num_employees_ranges[]",
-                                            "q_organization_domains_list[]", "per_page", "page"},
-    "post_apollo_mixed_companies_search": {"q_organization_keyword_tags[]", "organization_locations[]",
-                                           "organization_num_employees_ranges[]",
-                                           "q_organization_domains_list[]", "per_page", "page"},
+    "post_apollo_mixed_people_api_search": {
+        "person_titles[]",
+        "q_keywords",
+        "person_locations[]",
+        "organization_num_employees_ranges[]",
+        "q_organization_domains_list[]",
+        "per_page",
+        "page",
+    },
+    "post_apollo_mixed_companies_search": {
+        "q_organization_keyword_tags[]",
+        "organization_locations[]",
+        "organization_num_employees_ranges[]",
+        "q_organization_domains_list[]",
+        "per_page",
+        "page",
+    },
     "get_apollo_organizations_enrich": {"domain"},
     "post_apollo_organizations_bulk_enrich": {"domains[]"},
     "post_firecrawl_search": {"query", "limit"},
     "post_waveinflu_similar_creators": {"platform", "seedProfileUrl", "limit", "contentDirection"},
     "post_waveinflu_email_lookup": {"url"},
-    "post_oxylabs_ai_search": {"source", "prompt", "query", "parse", "geo_location", "render", "search"},
+    "post_oxylabs_ai_search": {
+        "source",
+        "prompt",
+        "query",
+        "parse",
+        "geo_location",
+        "render",
+        "search",
+    },
 }
 
 # Quote-plane canaries: (method, REST path, params, body). The runtime price
@@ -101,10 +129,13 @@ SENT = {
 # table anywhere in this plugin), so the audit fails hard if quoting stops.
 # Quotes are free (X-AISA-Cost-Mode: quote) — nothing executes, nothing bills.
 QUOTE_CANARIES = [
-    ("GET", "/similarweb/website-traffic-snapshot",
-     {"domain": "example.com", "country": "us"}, None),
-    ("GET", "/semrush/keyword-difficulty",
-     {"phrase": "seo tools", "database": "us"}, None),
+    (
+        "GET",
+        "/similarweb/website-traffic-snapshot",
+        {"domain": "example.com", "country": "us"},
+        None,
+    ),
+    ("GET", "/semrush/keyword-difficulty", {"phrase": "seo tools", "database": "us"}, None),
     ("POST", "/tavily/search", None, {"query": "contract audit canary"}),
 ]
 
@@ -118,24 +149,28 @@ def call_tool(name, args, rid):
     key = os.environ.get("AISA_API_KEY", "").strip()
     if key:  # discovery requires auth; the schema calls are read-only & free
         headers["Authorization"] = f"Bearer {key}"
-    body = json.dumps({"jsonrpc": "2.0", "id": rid, "method": "tools/call",
-                       "params": {"name": name, "arguments": args}}).encode()
+    body = json.dumps(
+        {
+            "jsonrpc": "2.0",
+            "id": rid,
+            "method": "tools/call",
+            "params": {"name": name, "arguments": args},
+        }
+    ).encode()
     req = urllib.request.Request(MCP, data=body, headers=headers)
     raw = urllib.request.urlopen(req, timeout=90).read().decode()
     m = re.findall(r"data: (\{.*\})", raw)
     payload = json.loads(m[-1] if m else raw)
     if "error" in payload:
         err = payload["error"]
-        raise RuntimeError(
-            f"router error {err.get('code')}: {err.get('message')}"
-        )
+        raise RuntimeError(f"router error {err.get('code')}: {err.get('message')}")
     return json.loads(payload["result"]["content"][0]["text"])
 
 
 def fetch_live(names):
     live = {}
     for i in range(0, len(names), 20):
-        d = call_tool("AISA_BATCH_GET_SCHEMA", {"tools": names[i:i + 20]}, 100 + i)
+        d = call_tool("AISA_BATCH_GET_SCHEMA", {"tools": names[i : i + 20]}, 100 + i)
         live.update(d.get("tools", {}))
     return live
 
@@ -215,11 +250,16 @@ def main():
         msg = str(e)
         hint = ""
         if "401" in msg:
-            hint = " (discovery requires auth — set AISA_API_KEY; the audit calls are read-only and free)"
+            hint = (
+                " (discovery requires auth — set AISA_API_KEY; "
+                "the audit calls are read-only and free)"
+            )
         elif "unknown tool" in msg.lower():
-            hint = (" — the router META-SURFACE changed again (as when "
-                    "AISA_GET_DETAILS became AISA_BATCH_GET_SCHEMA); list the "
-                    "router's tools and port fetch_live() to the new meta-tool")
+            hint = (
+                " — the router META-SURFACE changed again (as when "
+                "AISA_GET_DETAILS became AISA_BATCH_GET_SCHEMA); list the "
+                "router's tools and port fetch_live() to the new meta-tool"
+            )
         print(f"AUDIT COULD NOT RUN: {msg}{hint}")
         return 2
 
@@ -231,8 +271,7 @@ def main():
             continue
         base = baseline.get(name)
         if base is None:
-            hard_fail.append(f"{name}: not in baseline — run --record after "
-                             "adding a tool to SENT")
+            hard_fail.append(f"{name}: not in baseline — run --record after adding a tool to SENT")
             continue
         schema = c.get("arguments_schema") or {}
         props = set((schema.get("properties") or {}).keys())
@@ -240,12 +279,16 @@ def main():
 
         s_hash, p_hash = entry_hashes(c)
         if s_hash != base["schema_sha256"]:
-            drift.append(f"{name}: arguments_schema CHANGED "
-                         f"(props now {sorted(props)}, required {sorted(required)}; "
-                         f"baseline props {base['properties']}, required {base['required']})")
+            drift.append(
+                f"{name}: arguments_schema CHANGED "
+                f"(props now {sorted(props)}, required {sorted(required)}; "
+                f"baseline props {base['properties']}, required {base['required']})"
+            )
         elif p_hash != base["pitfalls_sha256"]:
-            drift.append(f"{name}: known_pitfalls prose changed — REVIEW for new "
-                         f"window rules / conditional requirements")
+            drift.append(
+                f"{name}: known_pitfalls prose changed — REVIEW for new "
+                f"window rules / conditional requirements"
+            )
 
         sent = SENT.get(name, set())
         unknown = sent - props
@@ -265,12 +308,16 @@ def main():
     for line in quote_info:
         print("info ", line)
     if not hard_fail and not drift:
-        print(f"OK — {len(names)} contracts match the baseline and the plugin's "
-              "calls; quote plane serving")
+        print(
+            f"OK — {len(names)} contracts match the baseline and the plugin's "
+            "calls; quote plane serving"
+        )
         return 0
-    print(f"\n{len(hard_fail)} failure(s), {len(drift)} drift notice(s). "
-          "Review, adapt tools/ if needed, then regenerate the baseline with "
-          "--record.")
+    print(
+        f"\n{len(hard_fail)} failure(s), {len(drift)} drift notice(s). "
+        "Review, adapt tools/ if needed, then regenerate the baseline with "
+        "--record."
+    )
     return 1
 
 
