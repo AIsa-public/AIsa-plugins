@@ -46,6 +46,32 @@ supplied through the host's credential mechanism — never committed.
 7. **After merge** the work item closes and its status label clears; a version bump is only
    made after the previous version is live on its marketplace.
 
+## Attribution
+
+Every plugin tells AIsa *which plugin, on which host, at which version* made a call — and
+nothing about who the user is. That is how AIsa knows how much usage each plugin drives.
+The rule is [CODE_STANDARD.md §5a](CODE_STANDARD.md#5a-attribution); the practice that makes
+it work:
+
+- **One token, one place.** Build the `User-Agent` in the plugin's AIsa client and route
+  every request through it — tools, quotes, retries, fallbacks. A second code path that
+  forgets the header is unattributed traffic.
+  `aisa-<plugin>-<host>-plugin/<version> (+https://github.com/AIsa-public/AIsa-plugins)`
+- **Version from the manifest, never a literal.** Read it at runtime from `manifest.yaml`
+  / `plugin.json` so a bump can't leave the token behind (`aisa-gtm` reads
+  `manifest.yaml`; that is the reference implementation).
+- **Host in the token.** The same plugin on Dify and on Claude Code should be two lines in
+  AIsa's dashboard, not one — pass the host through to the client rather than guessing it.
+- **No user data.** AIsa counts distinct users from the API key. Prompts, e-mails, IDs and
+  tenant names never go into headers.
+- **Test it offline.** Capture the outgoing request in the plugin's test suite and assert
+  the exact token for each host; it is a one-line test and the only thing that catches a
+  silent regression.
+- **Keep billing mode separate.** Quote/dry-run calls use the same token plus
+  `X-AISA-Cost-Mode`; don't encode mode into the token.
+
+CI can't observe runtime traffic, so this is confirmed in the PR checklist and in review.
+
 ## Read this before contributing (humans and agents)
 
 Read in this order — the first three are the whole contract:

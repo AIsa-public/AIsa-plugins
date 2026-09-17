@@ -10,6 +10,10 @@ bundle Claude Code uses, plus a Codex manifest.
 | `.codex-plugin/plugin.json` | `name` equals the AIsa plugin name; `version` is `<plugin version>+codex.<build>`; `skills` points at an existing directory; `interface.privacyPolicyURL` and `interface.termsOfServiceURL` present |
 | `skills/` | shared with the Claude Code profile |
 
+## Attribution
+
+Host token: `codex` → `User-Agent: aisa-<plugin>-codex-plugin/<version> (+…)` (CODE_STANDARD.md §5a).
+
 ## Catalog
 
 The plugin is listed in `/.agents/plugins/marketplace.json` with

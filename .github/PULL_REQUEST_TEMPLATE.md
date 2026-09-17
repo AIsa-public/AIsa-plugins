@@ -26,6 +26,7 @@ Closes #
 - [ ] Offline tests cover the change (no network, no key)
 - [ ] No secrets or `.env`; new dependencies are pinned and justified below
 - [ ] Version untouched, or bumped everywhere listed in `version_sources`
+- [ ] Attribution: every call to AIsa sends `aisa-<plugin>-<host>-plugin/<version> (+repo)` as `User-Agent`, built in one place from the manifest version, and an offline test asserts it per host (n/a if no AIsa calls changed)
 - [ ] README / profile docs updated; English-only outside locale fields
 - [ ] Commit subjects follow `scope: imperative summary`
 

@@ -12,6 +12,10 @@ Claude Code plugin bundle; it is normally the plugin root and is shared with Cod
 | `scripts/` | helper scripts the skill calls; read-only towards the AIsa API unless documented otherwise |
 | `README.md` | install instructions using `claude plugin marketplace add` / `claude plugin install` |
 
+## Attribution
+
+Host token: `claude-code` → `User-Agent: aisa-<plugin>-claude-code-plugin/<version> (+…)` (CODE_STANDARD.md §5a).
+
 ## Catalog
 
 The plugin is listed in `/.claude-plugin/marketplace.json` with `source: ./plugins/<name>`
