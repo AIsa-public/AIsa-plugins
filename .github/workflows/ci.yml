@@ -175,3 +175,22 @@ jobs:
           echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check --strict
           tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
       - run: ${RUNNER_TEMP}/gitleaks git --no-banner --redact --verbose .
+
+  gate:
+    # The one check to require in the `main` ruleset. Its name never changes, whatever the
+    # matrix expands to; it fails if any upstream job failed or was cancelled.
+    name: gate
+    if: always()
+    needs: [discover, universal, lint, test, host, workflows, secrets]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: All required jobs succeeded
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS"
+          if echo "$RESULTS" | grep -Eq '"result": *"(failure|cancelled|skipped)"'; then
+            echo "::error::one or more required jobs did not succeed"
+            exit 1
+          fi
