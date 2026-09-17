@@ -194,7 +194,8 @@ def search_args(schema, query):
     required = set((schema or {}).get("required") or [])
     args = {}
     for name, spec in props.items():
-        if name not in required and name.lower() not in _QUERY_PARAMS:
+        limit_like = name.lower() in {"limit", "max_results", "top_k", "n"}
+        if name not in required and name.lower() not in _QUERY_PARAMS and not limit_like:
             continue
         kind = (spec or {}).get("type")
         if name.lower() in _QUERY_PARAMS:
@@ -260,18 +261,31 @@ def name_tokens(name):
     return {t.lower() for t in re.split(r"[\s_\-./]+", spaced) if t}
 
 
-def suggest_renames(missing, live_names):
-    """For each missing tool, live tools sharing a distinctive (vendor-like) token.
+def rank_candidates(missing_name, live_names, top=3):
+    """Live tools most likely to be `missing_name` under a new name, best first.
 
-    Distinctive = at least 5 characters and not in _GENERIC_TOKENS, so
-    `similarwebRanking` matches `similarweb_website_ranking_v2` but not every
-    tool containing 'ranking'. Returns {missing_name: [candidates...]}."""
-    live_tokens = {n: name_tokens(n) for n in live_names}
-    out = {}
-    for name in missing:
-        keys = {t for t in name_tokens(name) if len(t) >= 5 and t not in _GENERIC_TOKENS}
-        out[name] = sorted(n for n, toks in live_tokens.items() if keys & toks and n != name)
-    return out
+    Score = shared tokens, counting generic ones (`traffic`, `trend`) once a
+    distinctive vendor token is shared; ties prefer shorter names. Returns
+    [(name, score), ...] with at most `top` entries and score >= 2."""
+    want = name_tokens(missing_name)
+    distinctive = {t for t in want if len(t) >= 5 and t not in _GENERIC_TOKENS}
+    scored = []
+    for cand in live_names:
+        if cand == missing_name:
+            continue
+        have = name_tokens(cand)
+        if not (distinctive & have):
+            continue
+        score = len(want & have)
+        if score >= 2:
+            scored.append((cand, score))
+    scored.sort(key=lambda c: (-c[1], len(c[0]), c[0]))
+    return scored[:top]
+
+
+def suggest_renames(missing, live_names):
+    """{missing_name: [best candidate names...]} — see rank_candidates."""
+    return {n: [c for c, _ in rank_candidates(n, live_names)] for n in missing}
 
 
 def fetch_live(names):
@@ -430,35 +444,25 @@ def main():
         try:
             meta = router_meta_tools()
             hints.append("router meta-tools: " + "; ".join(describe_meta(t) for t in meta))
-            vendors = sorted(
-                {
-                    tok
-                    for n in missing
-                    for tok in name_tokens(n)
-                    if len(tok) >= 5 and tok not in _GENERIC_TOKENS
-                }
-            )
-            found = set()
-            for vendor in vendors:
-                meta_name, names_found, sample = search_router_catalog(meta, vendor)
+            for name in missing:
+                phrase = " ".join(sorted(name_tokens(name)))
+                meta_name, names_found, sample = search_router_catalog(meta, phrase)
                 if meta_name is None:
                     hints.append("no catalog-search meta-tool found; cannot hunt for renames")
                     break
-                found |= names_found
-                hints.append(
-                    f"catalog search '{vendor}' via {meta_name}: "
-                    + (
-                        f"{len(names_found)} names: {', '.join(sorted(names_found)[:15])}"
-                        if names_found
-                        else f"no names parsed; raw sample: {sample}"
+                ranked = rank_candidates(name, sorted(names_found))
+                if ranked:
+                    best = ", ".join(f"{c} ({sc})" for c, sc in ranked)
+                    hints.append(f"{name}: likely renamed -> {best}  [via {meta_name} '{phrase}']")
+                elif names_found:
+                    hints.append(
+                        f"{name}: no close match among {len(names_found)} results for '{phrase}' "
+                        "(removed?)"
                     )
-                )
-            for name, cands in suggest_renames(missing, sorted(found)).items():
-                hints.append(
-                    f"{name}: possible renames -> {', '.join(cands)}"
-                    if cands
-                    else f"{name}: nothing in the catalog shares a distinctive token (removed?)"
-                )
+                else:
+                    hints.append(
+                        f"{name}: catalog search returned nothing parseable; raw: {sample}"
+                    )
         except Exception as e:  # hunting is best-effort; never masks the verdict
             hints.append(f"rename hunt aborted: {e}")
 
