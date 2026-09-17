@@ -76,10 +76,21 @@ debugging.
 ```text
 .agents/plugins/marketplace.json     Codex marketplace
 .claude-plugin/marketplace.json      Claude Code marketplace
+plugins/<name>/plugin.aisa.yaml      Plugin declaration CI reads (languages, hosts, tests)
 plugins/aisa-search/                 Shared plugin bundle
 plugins/aisa-search/dify/            Dify-specific Tool Plugin
 plugins/aisa-gtm/dify/               Dify-specific Go-to-Market Tool Plugin
+standards/                           Language and host profiles of the code standard
+.github/scripts/                     The CI checks; run them locally with check_all.sh
 ```
 
 The plugin contains no API keys. Set `AISA_API_KEY` in the environment that
 launches the agent. Do not commit `.env` files or credentials.
+
+## Contributing
+
+Every plugin is held to the [AIsa Code Standard](CODE_STANDARD.md) — universal rules plus
+per-language and per-host profiles under [`standards/`](standards) — and CI enforces it on
+every pull request. [CONTRIBUTING.md](CONTRIBUTING.md) covers how work is coordinated
+through issues, how to run the checks locally (`bash .github/scripts/check_all.sh`), and
+how to add a plugin, a language or a host.

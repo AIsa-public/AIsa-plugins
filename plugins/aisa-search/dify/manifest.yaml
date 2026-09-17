@@ -9,6 +9,7 @@ description:
   en_US: Search across the web, X, YouTube, and Scholar with AIsa APIs.
   zh_Hans: 使用 AIsa API 搜索网页、X、YouTube 和学术文献。
 icon: aisa-logo.png
+repo: https://github.com/AIsa-public/AIsa-plugins
 icon_dark: aisa-logo.png
 resource:
   memory: 268435456
