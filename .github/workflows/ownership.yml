@@ -1,0 +1,43 @@
+name: ownership
+
+# Path-scoped approval policy (CONTRIBUTING.md §4), required by the `main` ruleset instead
+# of a flat "N approvals":
+#   plugins/<name>/**  -> that plugin's `owners` from plugin.aisa.yaml on the base branch
+#   everything else    -> repository admins
+# A group passes when the PR author is in it or one of its members approved.
+#
+# The policy script is always taken from the PR's base branch (explicit checkout ref), so a
+# PR cannot rewrite the rules it is judged by. Nothing from the PR head is executed.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ownership-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  ownership:
+    name: ownership
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install --quiet -r .github/scripts/requirements.txt
+      - env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python3 .github/scripts/ownership.py

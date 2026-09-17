@@ -3,6 +3,7 @@
 schema: 1
 name: aisa-search
 version: "0.1.2"
+owners: [zhenlonghe]
 description: Search across the web, X, YouTube, and Scholar with linked evidence.
 languages: [python]
 hosts:

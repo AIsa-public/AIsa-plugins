@@ -25,6 +25,8 @@ STANDARDS = REPO / "standards"
 
 SEMVER = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+HANDLE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$")
+CODEOWNERS = REPO / ".github" / "CODEOWNERS"
 VERSION_LINE = re.compile(
     r"""^\s*"?version"?\s*[:=]\s*["']?([0-9][^"'\s,]*)""", re.MULTILINE | re.IGNORECASE
 )
@@ -136,6 +138,14 @@ def check_declaration(decl: dict[str, Any], report: Report) -> bool:
         path,
         "tests is a non-empty list of {language, run[, cwd]}",
     )
+    owners = decl.get("owners")
+    ok &= report.check(
+        isinstance(owners, list)
+        and len(owners) > 0
+        and all(isinstance(o, str) and HANDLE.match(o) for o in owners),
+        path,
+        "owners is a non-empty list of GitHub handles",
+    )
     sources = decl.get("version_sources")
     ok &= report.check(
         isinstance(sources, list) and len(sources) > 0,
@@ -172,6 +182,29 @@ def check_profiles(decl: dict[str, Any], report: Report) -> None:
             path,
             f"test language '{test['language']}' is declared under languages",
         )
+
+
+# --- §8 CODEOWNERS routing agrees with the declaration -------------------------------------
+
+
+def codeowners_for(path_prefix: str) -> set[str] | None:
+    if not CODEOWNERS.is_file():
+        return None
+    for line in CODEOWNERS.read_text(encoding="utf-8").splitlines():
+        parts = line.split()
+        if parts and parts[0] == path_prefix:
+            return {p.lstrip("@") for p in parts[1:]}
+    return None
+
+
+def check_owners(decl: dict[str, Any], report: Report) -> None:
+    prefix = f"/{decl['_dir']}/"
+    listed = codeowners_for(prefix)
+    report.check(
+        listed == set(decl["owners"]),
+        ".github/CODEOWNERS",
+        f"{prefix} lists exactly the declared owners ({', '.join(decl['owners'])})",
+    )
 
 
 # --- §1, §2, §6 layout ---------------------------------------------------------------------
@@ -266,6 +299,7 @@ def main() -> int:
         if not check_declaration(decl, report):
             continue
         check_profiles(decl, report)
+        check_owners(decl, report)
         check_layout(decl, report)
         check_versions(decl, report)
         check_english(decl, report)

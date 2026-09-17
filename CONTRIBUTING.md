@@ -44,8 +44,18 @@ scripts, so green locally means green in the PR.
 1. Branch from `main`: `<type>/<short-slug>` (`feat/gtm-creator-filters`, `fix/search-timeout`).
 2. Commits: `scope: imperative summary`, one concern per PR.
 3. Open the PR against `main`, fill in the template, link the work item.
-4. CI must be green; a maintainer listed in `.github/CODEOWNERS` reviews changes to the
-   standard, CI, and the marketplace catalogs.
+4. CI must be green (`gate`) and the `ownership` check satisfied. Who has to approve depends
+   on the paths you touched — and if you are in the group, nobody does:
+
+   | Files | Approval from |
+   |---|---|
+   | `plugins/<name>/**` | one of that plugin's `owners` (`plugin.aisa.yaml`) |
+   | a plugin that does not exist on `main` yet | a repository admin |
+   | anything else (`.github/`, `standards/`, catalogs, README) | a repository admin |
+
+   So an owner ships changes to their own plugin unreviewed, an admin ships repository
+   changes unreviewed, and touching someone else's plugin pings its owners (CODEOWNERS
+   auto-requests them). The check re-runs whenever a review is submitted.
 5. Do **not** bump a version while the previous one is unpublished; update the open
    marketplace PR in place instead (see the host profile).
 
@@ -57,8 +67,8 @@ scripts, so green locally means green in the PR.
    (`standards/languages/`).
 3. Add the offline tests and declare the command under `tests`.
 4. Register the plugin in the marketplace catalogs the hosts use.
-5. Add an `area: <name>` label to `.github/labels.json` and a path rule to
-   `.github/labeler.yml`.
+5. Add an `area: <name>` label to `.github/labels.json`, a path rule to `.github/labeler.yml`,
+   and a `/plugins/<name>/` line in `.github/CODEOWNERS` listing the same `owners`.
 6. `bash .github/scripts/check_all.sh` → open the PR.
 
 ## 6. Add a language or a host

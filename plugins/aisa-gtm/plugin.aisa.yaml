@@ -3,6 +3,7 @@
 schema: 1
 name: aisa-gtm
 version: "0.2.0"
+owners: [lhymmEU]
 description: Go-to-market data tools (traffic, keywords, social, prospects, creators, AI visibility) for Dify.
 languages: [python]
 hosts:
