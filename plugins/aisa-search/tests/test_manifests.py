@@ -3,7 +3,6 @@ import re
 import unittest
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PLUGIN_ROOT = REPO_ROOT / "plugins" / "aisa-search"
 
@@ -16,8 +15,8 @@ class ManifestTests(unittest.TestCase):
         version = re.search(r"^version: (\S+)$", manifest, re.MULTILINE).group(1)
         name = re.search(r"^name: (\S+)$", manifest, re.MULTILINE).group(1)
         self.assertEqual(name, "go-to-market")
-        self.assertIn('name = "{}"'.format(name), project)
-        self.assertIn('version = "{}"'.format(version), project)
+        self.assertIn(f'name = "{name}"', project)
+        self.assertIn(f'version = "{version}"', project)
         self.assertIn("Dify-only", (root / "README.md").read_text(encoding="utf-8"))
         for catalog_path in (
             REPO_ROOT / ".agents" / "plugins" / "marketplace.json",
