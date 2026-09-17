@@ -1,14 +1,10 @@
-# Changes to the standard, CI, and the marketplace catalogs need a maintainer review.
-# Plugin owners review changes under their plugin directory.
+# Review *routing* only — GitHub auto-requests these reviewers. The merge policy itself is
+# enforced by .github/workflows/ownership.yml:
+#   plugins/<name>/**  -> that plugin's `owners` in plugin.aisa.yaml (must match the lines below)
+#   everything else    -> repository admins
+# CI checks that every plugin's line here agrees with its declaration.
 
-/.github/                @lhymmEU @aisa-barry
-/CODE_STANDARD.md        @lhymmEU @aisa-barry
-/CONTRIBUTING.md         @lhymmEU @aisa-barry
-/standards/              @lhymmEU @aisa-barry
-/ruff.toml               @lhymmEU @aisa-barry
-/.editorconfig           @lhymmEU @aisa-barry
-/.claude-plugin/         @lhymmEU @aisa-barry
-/.agents/                @lhymmEU @aisa-barry
+*                        @lhymmEU @aisa-barry @fatflowers @liuhaonan00 @JONY-AISA
 
 /plugins/aisa-search/    @zhenlonghe
 /plugins/aisa-gtm/       @lhymmEU

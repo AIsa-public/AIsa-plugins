@@ -15,6 +15,9 @@ matrix="$(python3 "$scripts/discover.py" --tsv)"
 section "universal standard"
 run python3 "$scripts/check_universal.py"
 
+section "CI script unit tests"
+run bash -c "cd '$scripts' && python3 -m unittest discover -s tests"
+
 while IFS=$'\t' read -r kind a b c d; do
   case "$kind" in
     LANG)

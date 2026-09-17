@@ -96,6 +96,10 @@ or host — if a rule only makes sense for one of them, it belongs in a profile.
 - Commit subject: `scope: imperative summary` — `aisa-search: reject private extract URLs`,
   `ci: pin actions by SHA`, `docs: …`. The body explains *why*, not *what*.
 - One concern per pull request. Link the issue it belongs to and fill in the PR template.
+- **Who approves is decided by what the PR touches** (enforced by the `ownership` check):
+  files under `plugins/<name>/` need one of that plugin's `owners`; everything else needs a
+  repository admin. An author who is in the group needs no review for that group, so owners
+  merge their own plugin work and admins merge repository work; a new plugin needs an admin.
 - Work is coordinated through issues (see `CONTRIBUTING.md`): a **work item** is opened before
   non-trivial work starts, so the open-issue list is the live view of who is doing what.
 - Reviews check against this standard. Matters of taste that are not written down here are
@@ -107,6 +111,7 @@ or host — if a rule only makes sense for one of them, it belongs in a profile.
 schema: 1
 name: aisa-search              # must equal the directory name
 version: "0.1.2"               # the single source of truth (§4)
+owners: [zhenlonghe]           # GitHub handles; their approval covers changes to this plugin (§8)
 description: One sentence, English.
 languages: [python]            # each needs standards/languages/<lang>.md + a lint recipe
 hosts:                         # host -> directory relative to the plugin, "." for the root
