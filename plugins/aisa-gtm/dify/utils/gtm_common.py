@@ -1,7 +1,6 @@
 """Shared helpers for the GTM tools: date-range defaults and geo mapping."""
 
 from datetime import date
-from typing import Optional, Tuple
 
 # Similarweb data is published with roughly a two-month lag; monthly endpoints
 # reject months that are too recent. Default window: a 3-month range ending
@@ -9,7 +8,7 @@ from typing import Optional, Tuple
 _SIMILARWEB_LAG_MONTHS = 2
 
 
-def _shift_month(year: int, month: int, delta: int) -> Tuple[int, int]:
+def _shift_month(year: int, month: int, delta: int) -> tuple[int, int]:
     index = year * 12 + (month - 1) + delta
     return index // 12, index % 12 + 1
 
@@ -20,7 +19,7 @@ def month_str(year: int, month: int) -> str:
 
 def default_month_range(
     span_months: int = 2, lag_months: int = _SIMILARWEB_LAG_MONTHS
-) -> Tuple[str, str]:
+) -> tuple[str, str]:
     """(start, end) months in YYYY-MM, `span_months` apart, lagged from today."""
     today = date.today()
     end_y, end_m = _shift_month(today.year, today.month, -lag_months)
@@ -130,7 +129,7 @@ def normalize_country(country: str) -> str:
     return "us"
 
 
-def dfs_location_name(country: str) -> Optional[str]:
+def dfs_location_name(country: str) -> str | None:
     return _DFS_LOCATIONS.get(normalize_country(country))
 
 

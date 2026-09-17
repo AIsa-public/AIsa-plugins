@@ -242,7 +242,8 @@ def main():
     if "--record" in sys.argv:
         return record(names)
 
-    baseline = json.load(open(os.path.join(HERE, "contracts_baseline.json")))
+    with open(os.path.join(HERE, "contracts_baseline.json"), encoding="utf-8") as f:
+        baseline = json.load(f)
 
     try:
         live = fetch_live(names)

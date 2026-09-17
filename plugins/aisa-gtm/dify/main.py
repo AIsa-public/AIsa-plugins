@@ -1,4 +1,4 @@
-from dify_plugin import Plugin, DifyPluginEnv
+from dify_plugin import DifyPluginEnv, Plugin
 
 # 240s: slow AI answer engines (chatgpt/gemini/perplexity via Oxylabs) can
 # legitimately take 60-110s; 120s left no headroom for parsing + summarizing.

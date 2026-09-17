@@ -1,9 +1,8 @@
 from collections.abc import Generator
-from typing import Any, Dict, List
+from typing import Any
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
-
 from utils.aisa_client import (
     AisaApiError,
     AisaApprovalRequired,
@@ -67,7 +66,7 @@ class WebResearchTool(Tool):
         yield self.create_json_message(payload)
         yield self.create_text_message(_summarize(mode, query, urls, result))
 
-    def _search_with_fallback(self, client: AisaClient, query: str) -> Dict[str, Any]:
+    def _search_with_fallback(self, client: AisaClient, query: str) -> dict[str, Any]:
         """Tavily first; on an upstream failure, retry once via Firecrawl.
 
         The cost gate applies to BOTH attempts (each is quoted before it
@@ -86,7 +85,7 @@ class WebResearchTool(Tool):
         return self.create_json_message({"error": {"code": code, "message": message}})
 
 
-def _parse_urls(raw: Any) -> List[str]:
+def _parse_urls(raw: Any) -> list[str]:
     if not raw:
         return []
     if isinstance(raw, list):
@@ -96,7 +95,7 @@ def _parse_urls(raw: Any) -> List[str]:
     return [u.strip() for u in candidates if u.strip()]
 
 
-def _summarize(mode: str, query: str, urls: List[str], result: Dict[str, Any]) -> str:
+def _summarize(mode: str, query: str, urls: list[str], result: dict[str, Any]) -> str:
     """Compact, agent-friendly text view of the raw JSON result."""
     items = find_results(result)
 

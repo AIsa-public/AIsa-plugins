@@ -1,9 +1,8 @@
 from collections.abc import Generator
-from typing import Any, List
+from typing import Any
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
-
 from utils.aisa_client import (
     AisaApiError,
     AisaApprovalRequired,
@@ -16,11 +15,11 @@ from utils.gtm_common import CostGuard
 _SEARCH_TYPES = ("people", "companies", "enrich_company", "enrich_bulk")
 
 
-def _split(raw: Any) -> List[str]:
+def _split(raw: Any) -> list[str]:
     return [part.strip() for part in str(raw or "").split(",") if part.strip()]
 
 
-def _size_ranges(raw: Any) -> List[str]:
+def _size_ranges(raw: Any) -> list[str]:
     """'11-50, 51-200' -> ['11,50', '51,200'] (Apollo's range format)."""
     ranges = []
     for part in _split(raw):

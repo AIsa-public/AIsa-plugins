@@ -284,7 +284,8 @@ def test_contract_fallback():
 def test_audit_wiring():
     import json as _json
 
-    baseline = _json.load(open(os.path.join(ROOT, "tests", "contracts_baseline.json")))
+    with open(os.path.join(ROOT, "tests", "contracts_baseline.json"), encoding="utf-8") as f:
+        baseline = _json.load(f)
     check("baseline covers 44 tools", len(baseline) == 44, f"got {len(baseline)}")
     check(
         "baseline uses the BATCH_GET_SCHEMA-era fields",
@@ -300,10 +301,9 @@ def test_audit_wiring():
         "audit SENT map matches the recorded baseline exactly",
         set(contract_audit.SENT) == set(baseline),
     )
-    check(
-        "audit targets the current router meta-tool",
-        "AISA_BATCH_GET_SCHEMA" in open(os.path.join(ROOT, "tests", "contract_audit.py")).read(),
-    )
+    with open(os.path.join(ROOT, "tests", "contract_audit.py"), encoding="utf-8") as f:
+        audit_source = f.read()
+    check("audit targets the current router meta-tool", "AISA_BATCH_GET_SCHEMA" in audit_source)
     check(
         "quote canaries defined (the gate has no static fallback)",
         len(contract_audit.QUOTE_CANARIES) >= 3,
@@ -547,11 +547,13 @@ def test_tool_helpers():
 def test_yaml_wiring():
     import yaml
 
-    prov = yaml.safe_load(open(os.path.join(ROOT, "provider", "go-to-market.yaml")))
+    with open(os.path.join(ROOT, "provider", "go-to-market.yaml"), encoding="utf-8") as f:
+        prov = yaml.safe_load(f)
     tools = prov["tools"]
     check("7 tools registered", len(tools) == 7, f"got {len(tools)}")
     for t in tools:
-        td = yaml.safe_load(open(os.path.join(ROOT, t)))
+        with open(os.path.join(ROOT, t), encoding="utf-8") as f:
+            td = yaml.safe_load(f)
         src = os.path.join(ROOT, td["extra"]["python"]["source"])
         check(f"{td['identity']['name']} source exists", os.path.exists(src))
         param_names = {p["name"] for p in td.get("parameters", [])}
@@ -561,7 +563,8 @@ def test_yaml_wiring():
         )
     creds = prov["credentials_for_provider"]["aisa_api_key"]
     check("credential links to GTM plan page", "aisa.one/solutions/go-to-market" in creds["url"])
-    manifest = yaml.safe_load(open(os.path.join(ROOT, "manifest.yaml")))
+    with open(os.path.join(ROOT, "manifest.yaml"), encoding="utf-8") as f:
+        manifest = yaml.safe_load(f)
     check(
         "manifest points at provider yaml",
         manifest["plugins"]["tools"] == ["provider/go-to-market.yaml"],
@@ -592,12 +595,12 @@ def test_yaml_wiring():
 def test_quote_gate():
     """Quote-first price gate: client quotes upstream, guard decides."""
     import utils.aisa_client as m
-    from utils.aisa_client import AisaApiError, AisaApprovalRequired
-    from utils.gtm_common import CostGuard
 
     # There is deliberately no static price table anywhere in the plugin —
     # prices change upstream; only live quotes are trusted.
     import utils.gtm_common as gc
+    from utils.aisa_client import AisaApiError, AisaApprovalRequired
+    from utils.gtm_common import CostGuard
 
     check("no static price table in gtm_common", not any("PRICES" in name for name in dir(gc)))
 
@@ -757,11 +760,13 @@ def test_quote_gate():
 
 
 def test_readme_rules():
-    readme = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
-    has_cjk = any("一" <= ch <= "鿿" for ch in readme)
+    with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as f:
+        readme = f.read()
+    has_cjk = any("\u4e00" <= ch <= "\u9fff" for ch in readme)
     check("README.md contains no Chinese characters", not has_cjk)
     check("README promotes the GTM plan", "aisa.one/solutions/go-to-market" in readme)
-    privacy = open(os.path.join(ROOT, "PRIVACY.md"), encoding="utf-8").read()
+    with open(os.path.join(ROOT, "PRIVACY.md"), encoding="utf-8") as f:
+        privacy = f.read()
     check("PRIVACY.md is not the template", "Please fill in" not in privacy)
 
 

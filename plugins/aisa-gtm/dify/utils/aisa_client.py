@@ -21,7 +21,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 GTM_PLAN_URL = "https://aisa.one/solutions/go-to-market"
 
@@ -94,7 +94,7 @@ class AisaApprovalRequired(AisaApiError):
     nothing was charged. ``.notice`` carries the structured approval request
     for the agent/user."""
 
-    def __init__(self, notice: Dict[str, Any]):
+    def __init__(self, notice: dict[str, Any]):
         self.notice = notice
         super().__init__("APPROVAL_REQUIRED", notice.get("message", "Approval required."))
 
@@ -173,7 +173,7 @@ class AisaClient:
         self.api_key = api_key
         # Quote-first price gate (see set_cost_guard / _enforce_cost_guard).
         self.cost_guard = None
-        self.call_quotes: List[Dict[str, Any]] = []
+        self.call_quotes: list[dict[str, Any]] = []
 
     # ------------------------------------------------------------ price gate
 
@@ -188,10 +188,10 @@ class AisaClient:
         self,
         method: str,
         endpoint: str,
-        params: Optional[Dict[str, Any]] = None,
-        data: Optional[Dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
         timeout: int = 30,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Free price quote for the EXACT request about to be made.
 
         AIsa's gateway returns a cost_estimate body (no execution, no charge)
@@ -214,8 +214,8 @@ class AisaClient:
         self,
         method: str,
         endpoint: str,
-        params: Optional[Dict[str, Any]],
-        data: Optional[Dict[str, Any]],
+        params: dict[str, Any] | None,
+        data: dict[str, Any] | None,
     ) -> None:
         """Quote the request and apply the guard.
 
@@ -254,7 +254,7 @@ class AisaClient:
             }
         )
 
-    def cost_disclosure(self) -> Optional[Dict[str, Any]]:
+    def cost_disclosure(self) -> dict[str, Any] | None:
         """Per-call quoted costs for this invocation, for honest output."""
         if not self.call_quotes:
             return None
@@ -273,13 +273,13 @@ class AisaClient:
         self,
         method: str,
         endpoint: str,
-        params: Optional[Dict[str, Any]] = None,
-        data: Optional[Dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
         timeout: int = 100,
         retries: int = 1,
         retry_delay_seconds: int = 3,
-        base_url: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        base_url: str | None = None,
+    ) -> dict[str, Any]:
         """Make a request; on a gateway contract-mismatch, self-heal once.
 
         If the gateway rejects the request shape and the endpoint has a known
@@ -327,9 +327,7 @@ class AisaClient:
             return result
 
     @staticmethod
-    def _minimal_params(
-        endpoint: str, params: Optional[Dict[str, Any]]
-    ) -> Optional[Dict[str, Any]]:
+    def _minimal_params(endpoint: str, params: dict[str, Any] | None) -> dict[str, Any] | None:
         """Required-only param subset, or None when fallback doesn't apply."""
         required = _REQUIRED_PARAMS.get(endpoint)
         if not required or not params:
@@ -344,14 +342,14 @@ class AisaClient:
         self,
         method: str,
         endpoint: str,
-        params: Optional[Dict[str, Any]] = None,
-        data: Optional[Dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
         timeout: int = 100,
         retries: int = 1,
         retry_delay_seconds: int = 3,
-        base_url: Optional[str] = None,
-        extra_headers: Optional[Dict[str, str]] = None,
-    ) -> Dict[str, Any]:
+        base_url: str | None = None,
+        extra_headers: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
         """Make a request and return the parsed, error-checked JSON body."""
         url = f"{base_url or self.BASE_URL}{endpoint}"
         if params:
@@ -388,7 +386,7 @@ class AisaClient:
         req = urllib.request.Request(url, data=request_data, headers=headers, method=method)
 
         attempts = retries + 1
-        last_error: Optional[AisaApiError] = None
+        last_error: AisaApiError | None = None
         for attempt in range(1, attempts + 1):
             try:
                 with urllib.request.urlopen(req, timeout=timeout) as response:
@@ -441,7 +439,7 @@ class AisaClient:
 
         raise last_error or AisaApiError("UNKNOWN_ERROR", "Request failed unexpectedly.")
 
-    def _check_body(self, body: Any) -> Dict[str, Any]:
+    def _check_body(self, body: Any) -> dict[str, Any]:
         """Reject error payloads hiding inside HTTP 200 responses."""
         if not isinstance(body, dict):
             return {"data": body}
@@ -451,7 +449,7 @@ class AisaClient:
         return body
 
     @staticmethod
-    def _extract_error(body: Dict[str, Any], default_code: str) -> tuple:
+    def _extract_error(body: dict[str, Any], default_code: str) -> tuple:
         error = body.get("error")
         if isinstance(error, dict):
             return (
@@ -473,26 +471,26 @@ class AisaClient:
 
     # --------------------------------------------------------------- account
 
-    def credits_balance(self) -> Dict[str, Any]:
+    def credits_balance(self) -> dict[str, Any]:
         """Account balance — free call, used for credential validation."""
         return self.request("GET", "/credits/balance", timeout=30, base_url=self.ACCOUNT_BASE_URL)
 
     # ---------------------------------------------------------------- tavily
 
-    def tavily_search(self, query: str) -> Dict[str, Any]:
+    def tavily_search(self, query: str) -> dict[str, Any]:
         return self.request("POST", "/tavily/search", data={"query": query})
 
-    def tavily_extract(self, urls: List[str]) -> Dict[str, Any]:
+    def tavily_extract(self, urls: list[str]) -> dict[str, Any]:
         return self.request("POST", "/tavily/extract", data={"urls": urls})
 
-    def tavily_crawl(self, url: str, max_depth: int = 2) -> Dict[str, Any]:
+    def tavily_crawl(self, url: str, max_depth: int = 2) -> dict[str, Any]:
         return self.request("POST", "/tavily/crawl", data={"url": url, "max_depth": max_depth})
 
-    def tavily_map(self, url: str) -> Dict[str, Any]:
+    def tavily_map(self, url: str) -> dict[str, Any]:
         return self.request("POST", "/tavily/map", data={"url": url})
 
 
-def _parse_delimited_text(raw: str) -> Dict[str, Any]:
+def _parse_delimited_text(raw: str) -> dict[str, Any]:
     """Parse a semicolon-delimited text/plain response (Semrush style).
 
     Semrush analytics responses are CSV-style rows separated by ';', usually
@@ -502,7 +500,7 @@ def _parse_delimited_text(raw: str) -> Dict[str, Any]:
     """
     text = raw.strip()
     lines = [line for line in text.splitlines() if line.strip()]
-    rows: List[Dict[str, Any]] = []
+    rows: list[dict[str, Any]] = []
     if lines and ";" in lines[0]:
         first = [c.strip() for c in lines[0].split(";")]
 
@@ -514,7 +512,7 @@ def _parse_delimited_text(raw: str) -> Dict[str, Any]:
         if has_header:
             for line in lines[1:]:
                 cells = [c.strip() for c in line.split(";")]
-                rows.append(dict(zip(first, cells)))
+                rows.append(dict(zip(first, cells, strict=False)))
         else:
             for line in lines:
                 cells = [c.strip() for c in line.split(";")]
@@ -522,7 +520,7 @@ def _parse_delimited_text(raw: str) -> Dict[str, Any]:
     return {"format": "delimited_text", "raw_text": text[:20000], "results": rows}
 
 
-def find_results(payload: Any) -> List[Dict[str, Any]]:
+def find_results(payload: Any) -> list[dict[str, Any]]:
     """Locate the main record list in a response without assuming an exact shape.
 
     AIsa proxies many upstream providers, each with its own envelope. This

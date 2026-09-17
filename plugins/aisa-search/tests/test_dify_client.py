@@ -6,7 +6,6 @@ from pathlib import Path
 from unittest import mock
 from urllib import error
 
-
 DIFY_ROOT = Path(__file__).resolve().parents[1] / "dify"
 sys.path.insert(0, str(DIFY_ROOT))
 
@@ -62,9 +61,8 @@ class ClientTests(unittest.TestCase):
             "\n".join(["https://example.com"] * 4),
         )
         for value in invalid_values:
-            with self.subTest(value=value):
-                with self.assertRaises(ClientError):
-                    parse_extract_urls(value)
+            with self.subTest(value=value), self.assertRaises(ClientError):
+                parse_extract_urls(value)
 
     def test_execute_sanitizes_api_key(self) -> None:
         response = FakeResponse(b'{"message":"token fake-key was accepted"}')
@@ -87,9 +85,11 @@ class ClientTests(unittest.TestCase):
         request_value = build_request(
             "tavily_search", {"query": "q"}, "fake-key", DEFAULT_BASE_URL, "dify"
         )
-        with mock.patch("aisa_client.request.urlopen", side_effect=http_error):
-            with self.assertRaises(ClientError) as context:
-                execute(request_value, "fake-key", 30)
+        with (
+            mock.patch("aisa_client.request.urlopen", side_effect=http_error),
+            self.assertRaises(ClientError) as context,
+        ):
+            execute(request_value, "fake-key", 30)
         self.assertNotIn("fake-key", str(context.exception.details))
 
 

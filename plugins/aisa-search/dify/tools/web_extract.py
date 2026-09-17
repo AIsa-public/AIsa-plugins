@@ -1,10 +1,9 @@
 from collections.abc import Generator
 from typing import Any
 
+from aisa_client import ClientError, parse_extract_urls
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
-
-from aisa_client import ClientError, parse_extract_urls
 from tools.common import invoke_aisa
 
 

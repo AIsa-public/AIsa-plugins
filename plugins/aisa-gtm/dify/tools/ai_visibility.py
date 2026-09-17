@@ -1,9 +1,8 @@
 from collections.abc import Generator
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
-
 from utils.aisa_client import (
     AisaApiError,
     AisaApprovalRequired,
@@ -52,8 +51,8 @@ def enrich_upstream_error(source: str, message: str) -> str:
     return message
 
 
-def _dfs_body(source: str, prompt: str, model: str, geo_iso: str) -> List[Dict[str, Any]]:
-    task: Dict[str, Any] = {"user_prompt": prompt, "model_name": model}
+def _dfs_body(source: str, prompt: str, model: str, geo_iso: str) -> list[dict[str, Any]]:
+    task: dict[str, Any] = {"user_prompt": prompt, "model_name": model}
     if source in _WEB_SEARCH:
         task["web_search"] = True
     if geo_iso and source in _GEO_CAPABLE:
@@ -61,7 +60,7 @@ def _dfs_body(source: str, prompt: str, model: str, geo_iso: str) -> List[Dict[s
     return [task]
 
 
-def _dfs_result(resp: Dict[str, Any]) -> Dict[str, Any]:
+def _dfs_result(resp: dict[str, Any]) -> dict[str, Any]:
     """Unwrap the DataForSEO envelope; a rejected task is still HTTP 200."""
     tasks = resp.get("tasks") or []
     if not tasks:
@@ -73,7 +72,7 @@ def _dfs_result(resp: Dict[str, Any]) -> Dict[str, Any]:
     return {"result": task.get("result"), "cost": task.get("cost")}
 
 
-def _first_model(models_resp: Dict[str, Any]) -> Optional[str]:
+def _first_model(models_resp: dict[str, Any]) -> str | None:
     for r in (models_resp.get("tasks") or [{}])[0].get("result") or []:
         if isinstance(r, dict):
             if r.get("model_name"):
@@ -121,7 +120,7 @@ class AiVisibilityTool(Tool):
             return
 
         result = truncate_payload(result)
-        payload: Dict[str, Any] = {"source": source, "prompt": prompt, "result": result}
+        payload: dict[str, Any] = {"source": source, "prompt": prompt, "result": result}
         cost = client.cost_disclosure()
         if cost:
             payload["cost"] = cost
@@ -171,7 +170,7 @@ class AiVisibilityTool(Tool):
             return out
 
     def _invoke_google(self, client, source, prompt, geo_location):
-        body: Dict[str, Any] = {"source": source, "parse": True, "query": prompt, "render": "html"}
+        body: dict[str, Any] = {"source": source, "parse": True, "query": prompt, "render": "html"}
         if geo_location:
             body["geo_location"] = geo_location
         try:
@@ -184,7 +183,7 @@ class AiVisibilityTool(Tool):
             )
             if not fallback_ok:
                 raise
-            task: Dict[str, Any] = {"keyword": prompt, "language_code": "en"}
+            task: dict[str, Any] = {"keyword": prompt, "language_code": "en"}
             if geo_location:
                 task["location_name"] = geo_location
             resp = client.request(
