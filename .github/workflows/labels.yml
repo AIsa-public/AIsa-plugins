@@ -1,0 +1,43 @@
+name: sync labels
+
+# .github/labels.json is the source of truth for the type/status/area/host labels.
+# Creates missing labels and updates colour/description of existing ones; never deletes.
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/labels.json", ".github/workflows/labels.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const fs = require("fs");
+            const wanted = JSON.parse(fs.readFileSync(".github/labels.json", "utf8"));
+            const { owner, repo } = context.repo;
+            const existing = new Map(
+              (await github.paginate(github.rest.issues.listLabelsForRepo, { owner, repo, per_page: 100 }))
+                .map((l) => [l.name, l])
+            );
+            for (const label of wanted) {
+              const current = existing.get(label.name);
+              if (!current) {
+                await github.rest.issues.createLabel({ owner, repo, ...label });
+                core.info(`created ${label.name}`);
+              } else if (current.color !== label.color || (current.description || "") !== label.description) {
+                await github.rest.issues.updateLabel({ owner, repo, name: label.name, color: label.color, description: label.description });
+                core.info(`updated ${label.name}`);
+              }
+            }

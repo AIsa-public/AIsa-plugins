@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Code standard & contributing guide
+    url: https://github.com/AIsa-public/AIsa-plugins/blob/main/CONTRIBUTING.md
+    about: How work is coordinated, how to run the checks, how to add a plugin, language or host.
+  - name: AIsa community discussions
+    url: https://github.com/AIsa-team/aisa-community/discussions
+    about: Questions, show & tell and anything that is not a bug, proposal or work item.
