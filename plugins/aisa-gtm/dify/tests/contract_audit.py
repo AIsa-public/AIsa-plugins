@@ -166,16 +166,79 @@ def call_tool(name, args, rid):
     return json.loads(result["content"][0]["text"])
 
 
-def list_router_tools():
-    """Every tool name the router currently advertises (standard MCP tools/list)."""
-    names, cursor, rid = [], None, 900
+def router_meta_tools():
+    """The router's own (meta) tools from MCP tools/list — name + inputSchema.
+
+    AIsa's router is a meta-router: tools/list returns a handful of meta-tools
+    (schema lookup, catalog search, execution) rather than the vendor catalog."""
+    tools, cursor, rid = [], None, 900
     while True:
         result = rpc("tools/list", {"cursor": cursor} if cursor else {}, rid)
-        names.extend(t["name"] for t in result.get("tools", []))
+        tools.extend(result.get("tools", []))
         cursor = result.get("nextCursor")
         rid += 1
         if not cursor:
-            return names
+            return tools
+
+
+_SEARCH_META = re.compile(r"search|find|list|catalog|discover", re.I)
+_QUERY_PARAMS = {"query", "q", "search", "keyword", "keywords", "text", "term", "name"}
+
+
+def search_args(schema, query):
+    """Best-effort arguments for an unknown catalog-search meta-tool.
+
+    Fills every required property (and any query-like optional one): query-like
+    names get the query string, integers get 20, booleans False, others the query."""
+    props = (schema or {}).get("properties") or {}
+    required = set((schema or {}).get("required") or [])
+    args = {}
+    for name, spec in props.items():
+        if name not in required and name.lower() not in _QUERY_PARAMS:
+            continue
+        kind = (spec or {}).get("type")
+        if name.lower() in _QUERY_PARAMS:
+            args[name] = query
+        elif kind == "integer" or kind == "number":
+            args[name] = 20
+        elif kind == "boolean":
+            args[name] = False
+        elif kind == "array":
+            args[name] = [query]
+        else:
+            args[name] = query
+    return args
+
+
+def collect_names(payload, out=None):
+    """Every string under a 'name'/'tool'/'tool_name' key, recursively."""
+    out = set() if out is None else out
+    if isinstance(payload, dict):
+        for k, v in payload.items():
+            if k in ("name", "tool", "tool_name") and isinstance(v, str):
+                out.add(v)
+            else:
+                collect_names(v, out)
+    elif isinstance(payload, list):
+        for item in payload:
+            collect_names(item, out)
+    return out
+
+
+def search_router_catalog(meta_tools, query):
+    """(meta-tool name, tool names found, raw sample) for a vendor-token query.
+
+    Uses the first meta-tool whose name looks like a catalog search. Returns
+    (None, set(), "") when there is none."""
+    for tool in meta_tools:
+        name = tool.get("name", "")
+        if name == "AISA_BATCH_GET_SCHEMA" or not _SEARCH_META.search(name):
+            continue
+        args = search_args(tool.get("inputSchema"), query)
+        payload = call_tool(name, args, 950)
+        sample = json.dumps(payload, sort_keys=True)[:400]
+        return name, collect_names(payload), sample
+    return None, set(), ""
 
 
 # Tokens too generic to identify a vendor/tool family when hunting for renames.
@@ -359,16 +422,45 @@ def main():
     hints = []
     if missing:
         try:
-            catalog = list_router_tools()
-            hints.append(f"router catalog lists {len(catalog)} tools")
-            for name, cands in suggest_renames(missing, catalog).items():
+            meta = router_meta_tools()
+            hints.append(
+                "router meta-tools: "
+                + "; ".join(
+                    f"{t.get('name')}({', '.join(((t.get('inputSchema') or {}).get('properties') or {}).keys())})"
+                    for t in meta
+                )
+            )
+            vendors = sorted(
+                {
+                    tok
+                    for n in missing
+                    for tok in name_tokens(n)
+                    if len(tok) >= 5 and tok not in _GENERIC_TOKENS
+                }
+            )
+            found = set()
+            for vendor in vendors:
+                meta_name, names_found, sample = search_router_catalog(meta, vendor)
+                if meta_name is None:
+                    hints.append("no catalog-search meta-tool found; cannot hunt for renames")
+                    break
+                found |= names_found
+                hints.append(
+                    f"catalog search '{vendor}' via {meta_name}: "
+                    + (
+                        f"{len(names_found)} names: {', '.join(sorted(names_found)[:15])}"
+                        if names_found
+                        else f"no names parsed; raw sample: {sample}"
+                    )
+                )
+            for name, cands in suggest_renames(missing, sorted(found)).items():
                 hints.append(
                     f"{name}: possible renames -> {', '.join(cands)}"
                     if cands
-                    else f"{name}: no live tool shares a distinctive token (removed, not renamed?)"
+                    else f"{name}: nothing in the catalog shares a distinctive token (removed?)"
                 )
-        except Exception as e:  # listing is best-effort; never masks the verdict
-            hints.append(f"router catalog listing unavailable: {e}")
+        except Exception as e:  # hunting is best-effort; never masks the verdict
+            hints.append(f"rename hunt aborted: {e}")
 
     for line in hard_fail:
         print("FAIL ", line)

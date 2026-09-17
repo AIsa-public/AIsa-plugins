@@ -320,6 +320,21 @@ def test_audit_wiring():
         contract_audit.suggest_renames(["similarwebRanking"], ["tavily_search"])
         == {"similarwebRanking": []},
     )
+    schema = {
+        "properties": {"query": {"type": "string"}, "limit": {"type": "integer"}, "x": {}},
+        "required": ["query", "limit"],
+    }
+    check(
+        "catalog-search args fill required + query-like params only",
+        contract_audit.search_args(schema, "similarweb") == {"query": "similarweb", "limit": 20},
+    )
+    check(
+        "catalog names are collected recursively",
+        contract_audit.collect_names(
+            {"tools": [{"name": "a", "meta": {"tool": "b"}}], "k": [{"name": "c"}]}
+        )
+        == {"a", "b", "c"},
+    )
     check(
         "audit SENT map matches the recorded baseline exactly",
         set(contract_audit.SENT) == set(baseline),
