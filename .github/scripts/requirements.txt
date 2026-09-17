@@ -1,0 +1,4 @@
+# Tooling for the CI scripts and local `check_all.sh`. Pinned; bump deliberately.
+ruff==0.15.8
+pyyaml==6.0.3
+check-jsonschema==0.38.0
