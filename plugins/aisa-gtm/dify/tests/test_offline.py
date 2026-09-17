@@ -297,28 +297,25 @@ def test_audit_wiring():
     sys.path.insert(0, os.path.join(ROOT, "tests"))
     import contract_audit
 
-    renames = contract_audit.suggest_renames(
-        ["similarwebRanking", "post_oxylabs_ai_search"],
+    ranked = contract_audit.rank_candidates(
+        "similarwebWebsiteTrafficTrend",
         [
-            "similarweb_website_ranking_v2",
-            "semrushRanking",
-            "oxylabs_ai_search_v2",
-            "tavily_search",
+            "get_similarweb_website_traffic_trend",
+            "get_similarweb_website_traffic_snapshot",
+            "get_similarweb_demographics",
+            "get_financial_prices_snapshot",
+            "get_tikhub_trend",
         ],
     )
     check(
-        "rename hints match on vendor tokens only",
-        renames
-        == {
-            "similarwebRanking": ["similarweb_website_ranking_v2"],
-            "post_oxylabs_ai_search": ["oxylabs_ai_search_v2"],
-        },
-        f"got {renames}",
+        "rename ranking puts the exact rename first and drops vendor-less names",
+        [c for c, _ in ranked]
+        == ["get_similarweb_website_traffic_trend", "get_similarweb_website_traffic_snapshot"],
+        f"got {ranked}",
     )
     check(
-        "rename hints report removal when nothing shares a token",
-        contract_audit.suggest_renames(["similarwebRanking"], ["tavily_search"])
-        == {"similarwebRanking": []},
+        "rename ranking reports nothing when only generic tokens match",
+        contract_audit.rank_candidates("similarwebRanking", ["get_semrush_ranking"]) == [],
     )
     schema = {
         "properties": {"query": {"type": "string"}, "limit": {"type": "integer"}, "x": {}},
