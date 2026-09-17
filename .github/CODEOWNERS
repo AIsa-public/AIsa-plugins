@@ -1,0 +1,14 @@
+# Changes to the standard, CI, and the marketplace catalogs need a maintainer review.
+# Plugin ownership: add one line per plugin as owners are agreed.
+
+/.github/                @lhymmEU @aisa-barry
+/CODE_STANDARD.md        @lhymmEU @aisa-barry
+/CONTRIBUTING.md         @lhymmEU @aisa-barry
+/standards/              @lhymmEU @aisa-barry
+/ruff.toml               @lhymmEU @aisa-barry
+/.editorconfig           @lhymmEU @aisa-barry
+/.claude-plugin/         @lhymmEU @aisa-barry
+/.agents/                @lhymmEU @aisa-barry
+
+# /plugins/aisa-search/  @<owner>
+# /plugins/aisa-gtm/     @<owner>

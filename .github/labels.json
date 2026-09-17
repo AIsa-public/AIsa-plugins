@@ -1,0 +1,22 @@
+[
+  { "name": "type: bug",           "color": "d73a4a", "description": "Something is broken" },
+  { "name": "type: feature",       "color": "a2eeef", "description": "New capability or change proposal" },
+  { "name": "type: work-item",     "color": "0e8a16", "description": "A member is working on this" },
+  { "name": "type: chore",         "color": "cfd3d7", "description": "Maintenance, tooling, dependencies" },
+  { "name": "type: docs",          "color": "0075ca", "description": "Documentation only" },
+
+  { "name": "status: planned",     "color": "c5def5", "description": "Agreed, not started" },
+  { "name": "status: in-progress", "color": "fbca04", "description": "Being worked on right now" },
+  { "name": "status: blocked",     "color": "b60205", "description": "Needs something from someone else" },
+  { "name": "status: in-review",   "color": "5319e7", "description": "A pull request is open" },
+
+  { "name": "area: aisa-search",   "color": "bfd4f2", "description": "plugins/aisa-search" },
+  { "name": "area: aisa-gtm",      "color": "bfd4f2", "description": "plugins/aisa-gtm" },
+  { "name": "area: marketplace",   "color": "bfd4f2", "description": "Marketplace catalogs and root README" },
+  { "name": "area: ci",            "color": "bfd4f2", "description": "Workflows and CI scripts" },
+  { "name": "area: standard",      "color": "bfd4f2", "description": "CODE_STANDARD.md, profiles, lint config" },
+
+  { "name": "host: claude-code",   "color": "f9d0c4", "description": "Claude Code bundle" },
+  { "name": "host: codex",         "color": "f9d0c4", "description": "Codex bundle" },
+  { "name": "host: dify",          "color": "f9d0c4", "description": "Dify tool plugin" }
+]

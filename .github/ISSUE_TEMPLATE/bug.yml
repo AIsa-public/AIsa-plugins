@@ -1,0 +1,58 @@
+name: Bug report
+description: Something is broken in a published or in-repo plugin.
+title: "[Bug] "
+labels: ["type: bug"]
+body:
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Plugin
+      options:
+        - aisa-search
+        - aisa-gtm
+        - marketplace catalogs
+        - other
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host
+      options:
+        - Claude Code
+        - Codex
+        - Dify
+        - other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Plugin version
+      placeholder: "0.1.2"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Be specific. Paste the exact error text if there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The minimal prompt / tool call / command that triggers it.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / request IDs
+      description: Redact API keys. `X-Request-ID` values help AIsa trace the call.
+      render: text

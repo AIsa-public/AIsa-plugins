@@ -1,0 +1,26 @@
+# Path-based PR labels (actions/labeler). Keep in step with .github/labels.json.
+"area: aisa-search":
+  - changed-files:
+      - any-glob-to-any-file: ["plugins/aisa-search/**"]
+"area: aisa-gtm":
+  - changed-files:
+      - any-glob-to-any-file: ["plugins/aisa-gtm/**"]
+"area: marketplace":
+  - changed-files:
+      - any-glob-to-any-file: [".claude-plugin/**", ".agents/**", "README.md"]
+"area: ci":
+  - changed-files:
+      - any-glob-to-any-file: [".github/**"]
+"area: standard":
+  - changed-files:
+      - any-glob-to-any-file:
+          ["CODE_STANDARD.md", "CONTRIBUTING.md", "standards/**", "ruff.toml", ".editorconfig"]
+"host: dify":
+  - changed-files:
+      - any-glob-to-any-file: ["plugins/*/dify/**"]
+"host: claude-code":
+  - changed-files:
+      - any-glob-to-any-file: ["plugins/*/.claude-plugin/**", "plugins/*/skills/**", ".claude-plugin/**"]
+"host: codex":
+  - changed-files:
+      - any-glob-to-any-file: ["plugins/*/.codex-plugin/**", "plugins/*/skills/**", ".agents/**"]
