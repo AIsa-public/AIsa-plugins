@@ -110,3 +110,5 @@ When Claude Code is available, also run:
 ```bash
 claude plugin validate .
 ```
+
+<!-- ownership-check probe: non-owner editing aisa-search -->
