@@ -73,6 +73,35 @@ or host — if a rule only makes sense for one of them, it belongs in a profile.
 - Plugins are read-only towards third-party platforms unless writing *is* the plugin's
   purpose; write paths are opt-in and documented in the README.
 
+## 5a. Attribution
+
+AIsa needs to know how much usage each plugin drives — per plugin, per host, per version —
+without ever learning who the end user is.
+
+- Every request a plugin sends to AIsa carries a `User-Agent` product token in exactly this
+  shape:
+
+  ```
+  aisa-<plugin>-<host>-plugin/<version> (+https://github.com/AIsa-public/AIsa-plugins)
+  ```
+
+  `<plugin>` is the `name` in `plugin.aisa.yaml`, `<host>` is the host-profile name the
+  request is made from (`dify`, `claude-code`, `codex`, …), `<version>` is the plugin
+  version read from its manifest at runtime — never a second hard-coded copy.
+- The token identifies the *plugin*, not the person. No user IDs, e-mails, prompts, tenant
+  names or hostnames go into it or any other header. AIsa counts distinct users itself,
+  from the API key behind the request.
+- One place builds the token (the plugin's AIsa client) and every code path goes through
+  it. Cost-mode / quote requests use the same token and a separate `X-AISA-Cost-Mode`
+  header, so attribution and billing mode stay orthogonal.
+- An offline test asserts the exact token on an outgoing request for each host the plugin
+  supports.
+- CI cannot see runtime traffic, so this rule is enforced by the PR checklist and review:
+  a PR adding a plugin, a host, or a new code path to AIsa confirms the token is sent and
+  tested. Plugins that predate this rule migrate at their next version bump.
+
+`README.md › Attribution` has the practical recommendations.
+
 ## 6. Tests
 
 - Every plugin has an **offline** test suite: no network, no API key, runnable with one

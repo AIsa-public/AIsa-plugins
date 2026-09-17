@@ -25,6 +25,10 @@ Applies to every plugin with a `dify` entry under `hosts`. The host directory is
 - A new version is packaged and submitted to `langgenius/dify-plugins` only after the
   previous one is live; the open marketplace PR is updated in place until then.
 
+## Attribution
+
+Host token: `dify` → `User-Agent: aisa-<plugin>-dify-plugin/<version> (+…)` (CODE_STANDARD.md §5a).
+
 ## Localization
 
 `label` / `description` fields carry `en_US` plus any of `zh_Hans`, `ja_JP`, `pt_BR`.
