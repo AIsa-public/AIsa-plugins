@@ -61,6 +61,12 @@ class DecideTests(unittest.TestCase):
         ok, _ = decide(["README.md"], "leo", {"bob"}, ADMINS, OWNERS)
         self.assertTrue(ok)
 
+    def test_admin_group_message_never_lists_nobody(self):
+        ok, lines = decide(["README.md"], "carol", set(), set(), OWNERS)
+        self.assertFalse(ok)
+        self.assertIn("a repository admin", lines[0])
+        self.assertNotIn("nobody", lines[0])
+
     def test_new_plugin_needs_admin(self):
         files = ["plugins/news/plugin.aisa.yaml", "plugins/news/README.md"]
         ok, lines = decide(files, "leo", set(), ADMINS, OWNERS)

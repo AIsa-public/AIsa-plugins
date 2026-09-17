@@ -18,6 +18,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -88,7 +89,10 @@ def decide(
             lines.append(f"ok   {label}: approved by {who} ({len(touched)} files)")
         else:
             ok = False
-            need = ", ".join(f"@{u}" for u in sorted(owners)) or "(nobody is listed!)"
+            if label.endswith(ADMIN_GROUP):
+                need = "a repository admin"
+            else:
+                need = ", ".join(f"@{u}" for u in sorted(owners)) or "(nobody is listed!)"
             sample = ", ".join(touched[:3]) + (" …" if len(touched) > 3 else "")
             lines.append(f"NEED {label}: approval from one of {need} — touches {sample}")
     if not lines:
@@ -126,6 +130,16 @@ def api(path: str, token: str, params: dict | None = None) -> list | dict:
     return collected
 
 
+def is_admin(repo: str, login: str, token: str) -> bool:
+    """Per-user permission lookup — readable with the workflow token, unlike the
+    collaborator listing, which silently comes back empty."""
+    try:
+        info = api(f"/repos/{repo}/collaborators/{urllib.parse.quote(login)}/permission", token)
+    except urllib.error.HTTPError:
+        return False
+    return info.get("role_name") == "admin" or info.get("permission") == "admin"
+
+
 def owners_on_base(root: Path) -> dict[str, set[str]]:
     result: dict[str, set[str]] = {}
     for declaration in sorted(root.glob("plugins/*/plugin.aisa.yaml")):
@@ -147,9 +161,9 @@ def main() -> int:
     page = {"per_page": 100}
     files = [f["filename"] for f in api(f"/repos/{repo}/pulls/{number}/files", token, page)]
     reviews = api(f"/repos/{repo}/pulls/{number}/reviews", token, page)
-    collaborators = api(f"/repos/{repo}/collaborators", token, {"permission": "admin", **page})
-    admins = {c["login"] for c in collaborators}
     approvers = latest_approvals(reviews)
+    # Only the people who can satisfy a group matter: the author and the current approvers.
+    admins = {login for login in {author, *approvers} if is_admin(repo, login, token)}
     ok, lines = decide(files, author, approvers, admins, owners_on_base(root))
 
     heading = "Ownership check: " + ("satisfied" if ok else "approval still needed")
