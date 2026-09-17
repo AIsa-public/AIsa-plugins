@@ -175,6 +175,17 @@ def fetch_live(names):
     return live
 
 
+def unavailable_reason(contract):
+    """What the router said about a tool it did not serve a schema for.
+
+    Everything except the (large) schema/pitfalls fields, so an entitlement or
+    plan message shows up verbatim instead of an opaque MISSING."""
+    if not contract:
+        return "absent from the router response"
+    rest = {k: v for k, v in contract.items() if k not in ("arguments_schema", "known_pitfalls")}
+    return json.dumps(rest, sort_keys=True)[:300]
+
+
 def entry_hashes(contract):
     schema = contract.get("arguments_schema") or {}
     pitfalls = contract.get("known_pitfalls")
@@ -192,6 +203,7 @@ def record(names):
         c = live.get(name)
         if not c or not c.get("successful"):
             print(f"CANNOT RECORD: {name} missing/unavailable in live catalog")
+            print(f"    router says: {unavailable_reason(c)}")
             return 2
         schema = c.get("arguments_schema") or {}
         s_hash, p_hash = entry_hashes(c)
@@ -268,7 +280,10 @@ def main():
     for name in names:
         c = live.get(name)
         if not c or not c.get("successful"):
-            hard_fail.append(f"{name}: MISSING/unavailable in live catalog")
+            hard_fail.append(
+                f"{name}: MISSING/unavailable in live catalog — router says: "
+                f"{unavailable_reason(c)}"
+            )
             continue
         base = baseline.get(name)
         if base is None:
