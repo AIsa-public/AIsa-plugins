@@ -9,7 +9,6 @@ from pathlib import Path
 from unittest import mock
 from urllib import error
 
-
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = PLUGIN_ROOT / "scripts" / "aisa_api.py"
 SPEC = importlib.util.spec_from_file_location("aisa_api", SCRIPT_PATH)
@@ -107,9 +106,11 @@ class AisaAPIClientTests(unittest.TestCase):
             {},
             io.BytesIO(b'{"message":"bad secret-key"}'),
         )
-        with mock.patch.object(aisa_api.request, "urlopen", side_effect=http_error):
-            with self.assertRaises(aisa_api.ClientError) as raised:
-                aisa_api.execute(mock.Mock(), "secret-key", 30)
+        with (
+            mock.patch.object(aisa_api.request, "urlopen", side_effect=http_error),
+            self.assertRaises(aisa_api.ClientError) as raised,
+        ):
+            aisa_api.execute(mock.Mock(), "secret-key", 30)
         self.assertEqual(raised.exception.exit_code, 3)
         serialized = json.dumps(raised.exception.details)
         self.assertNotIn("secret-key", serialized)
@@ -125,9 +126,11 @@ class AisaAPIClientTests(unittest.TestCase):
                     {},
                     io.BytesIO(b"{}"),
                 )
-                with mock.patch.object(aisa_api.request, "urlopen", side_effect=http_error):
-                    with self.assertRaises(aisa_api.ClientError) as raised:
-                        aisa_api.execute(mock.Mock(), "secret-key", 30)
+                with (
+                    mock.patch.object(aisa_api.request, "urlopen", side_effect=http_error),
+                    self.assertRaises(aisa_api.ClientError) as raised,
+                ):
+                    aisa_api.execute(mock.Mock(), "secret-key", 30)
                 self.assertEqual(raised.exception.exit_code, 3)
 
     def test_rate_limit_and_server_errors_map_to_exit_four(self):
@@ -140,24 +143,27 @@ class AisaAPIClientTests(unittest.TestCase):
                     {},
                     io.BytesIO(b"{}"),
                 )
-                with mock.patch.object(aisa_api.request, "urlopen", side_effect=http_error):
-                    with self.assertRaises(aisa_api.ClientError) as raised:
-                        aisa_api.execute(mock.Mock(), "secret-key", 30)
+                with (
+                    mock.patch.object(aisa_api.request, "urlopen", side_effect=http_error),
+                    self.assertRaises(aisa_api.ClientError) as raised,
+                ):
+                    aisa_api.execute(mock.Mock(), "secret-key", 30)
                 self.assertEqual(raised.exception.exit_code, 4)
 
     def test_network_failure_maps_to_exit_four(self):
         failure = error.URLError(TimeoutError("timed out"))
-        with mock.patch.object(aisa_api.request, "urlopen", side_effect=failure):
-            with self.assertRaises(aisa_api.ClientError) as raised:
-                aisa_api.execute(mock.Mock(), "secret-key", 30)
+        with (
+            mock.patch.object(aisa_api.request, "urlopen", side_effect=failure),
+            self.assertRaises(aisa_api.ClientError) as raised,
+        ):
+            aisa_api.execute(mock.Mock(), "secret-key", 30)
         self.assertEqual(raised.exception.exit_code, 4)
         self.assertEqual(raised.exception.error_type, "network_error")
 
     def test_extract_rejects_private_urls_and_more_than_three_urls(self):
         for urls in (["http://127.0.0.1/private"], ["https://example.com"] * 4):
-            with self.subTest(urls=urls):
-                with self.assertRaises(aisa_api.ClientError):
-                    aisa_api.validate_payload("tavily_extract", {"urls": urls})
+            with self.subTest(urls=urls), self.assertRaises(aisa_api.ClientError):
+                aisa_api.validate_payload("tavily_extract", {"urls": urls})
 
     def test_cli_rejects_invalid_json_without_leaking_key(self):
         env = os.environ.copy()

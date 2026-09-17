@@ -3,7 +3,6 @@ from typing import Any
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
-
 from tools.common import invoke_aisa
 
 

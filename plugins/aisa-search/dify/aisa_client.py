@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import contextlib
 import ipaddress
 import json
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, Mapping, Optional, Tuple
+from typing import Any
 from urllib import error, parse, request
-
 
 VERSION = "0.1.2"
 DEFAULT_BASE_URL = "https://api.aisa.one"
@@ -24,7 +25,7 @@ class Operation:
     method: str
     path: str
     encoding: str
-    required_fields: Tuple[str, ...]
+    required_fields: tuple[str, ...]
 
 
 OPERATIONS: Mapping[str, Operation] = {
@@ -46,7 +47,7 @@ class ClientError(Exception):
         exit_code: int,
         error_type: str,
         message: str,
-        http_status: Optional[int] = None,
+        http_status: int | None = None,
         details: Any = None,
     ) -> None:
         super().__init__(message)
@@ -152,7 +153,7 @@ def user_agent_for(host: str) -> str:
     return "openai-codex/aisa-search/" + VERSION
 
 
-def _query_pairs(payload: Mapping[str, Any]) -> Iterable[Tuple[str, Any]]:
+def _query_pairs(payload: Mapping[str, Any]) -> Iterable[tuple[str, Any]]:
     for key, value in payload.items():
         if isinstance(value, dict):
             raise ClientError(
@@ -181,8 +182,8 @@ def build_request(
     operation = OPERATIONS[operation_name]
     validate_payload(operation_name, payload)
     url = base_url + operation.path
-    body: Optional[bytes] = None
-    content_type: Optional[str] = None
+    body: bytes | None = None
+    content_type: str | None = None
 
     if operation.encoding == "query":
         query_string = parse.urlencode(list(_query_pairs(payload)), doseq=True)
@@ -237,7 +238,7 @@ def _sanitize(value: Any, api_key: str) -> Any:
     return value
 
 
-def execute(request_value: request.Request, api_key: str, timeout: int) -> Tuple[Any, str]:
+def execute(request_value: request.Request, api_key: str, timeout: int) -> tuple[Any, str]:
     try:
         with request.urlopen(request_value, timeout=timeout) as response:
             body = _read_limited(response)
@@ -246,10 +247,8 @@ def execute(request_value: request.Request, api_key: str, timeout: int) -> Tuple
         body = exc.read(MAX_RESPONSE_BYTES + 1)
         details: Any = None
         if len(body) <= MAX_RESPONSE_BYTES and body:
-            try:
+            with contextlib.suppress(UnicodeDecodeError, json.JSONDecodeError):
                 details = _sanitize(json.loads(body.decode("utf-8")), api_key)
-            except (UnicodeDecodeError, json.JSONDecodeError):
-                pass
         exit_code = EXIT_AUTH if exc.code in {401, 402, 403} else EXIT_UPSTREAM
         error_type = "authentication_or_quota" if exit_code == EXIT_AUTH else "http_error"
         raise ClientError(
@@ -268,12 +267,12 @@ def execute(request_value: request.Request, api_key: str, timeout: int) -> Tuple
     return _sanitize(_decode_json(body), api_key), request_id
 
 
-def success_envelope(operation_name: str, data: Any, request_id: str) -> Dict[str, Any]:
+def success_envelope(operation_name: str, data: Any, request_id: str) -> dict[str, Any]:
     return {"ok": True, "operation": operation_name, "data": data, "request_id": request_id}
 
 
-def error_envelope(operation_name: str, exc: ClientError) -> Dict[str, Any]:
-    error_value: Dict[str, Any] = {"type": exc.error_type, "message": exc.message}
+def error_envelope(operation_name: str, exc: ClientError) -> dict[str, Any]:
+    error_value: dict[str, Any] = {"type": exc.error_type, "message": exc.message}
     if exc.http_status is not None:
         error_value["http_status"] = exc.http_status
     if exc.details is not None:
@@ -288,7 +287,7 @@ def invoke(
     base_url: str = DEFAULT_BASE_URL,
     host: str = "dify",
     timeout: int = DEFAULT_TIMEOUT_SECONDS,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     key = api_key.strip()
     if not key:
         raise ClientError(EXIT_INPUT, "invalid_credentials", "AIsa API key is required.")

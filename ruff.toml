@@ -7,6 +7,10 @@ target-version = "py311"
 # Baseline rule set. The Python profile expands this to I / UP / B / SIM
 # together with the mechanical fixes, so the two changes can be reviewed apart.
 select = [
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # bugbear
+    "SIM", # simplify
     "E",   # pycodestyle errors
     "F",   # pyflakes
 ]

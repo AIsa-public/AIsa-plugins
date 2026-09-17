@@ -7,14 +7,14 @@ import argparse
 import json
 import os
 import sys
+from collections.abc import Iterable, Mapping
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping, Optional, TextIO
-
+from typing import Any, TextIO
 
 DIFY_ROOT = Path(__file__).resolve().parents[1] / "dify"
 sys.path.insert(0, str(DIFY_ROOT))
 
-from aisa_client import (  # noqa: E402
+from aisa_client import (
     DEFAULT_BASE_URL,
     DEFAULT_TIMEOUT_SECONDS,
     EXIT_INPUT,
@@ -27,15 +27,15 @@ from aisa_client import (  # noqa: E402
     validate_base_url,
 )
 
-# Re-exported for tests/test_aisa_api.py, which patches ``aisa_api.request.urlopen``
-# and calls ``aisa_api.validate_payload`` through this module.
-from aisa_client import request, validate_payload  # noqa: E402, F401
-
+# Explicit re-exports (``name as name``) for tests/test_aisa_api.py, which patches
+# ``aisa_api.request.urlopen`` and calls ``aisa_api.validate_payload`` via this module.
+from aisa_client import request as request
+from aisa_client import validate_payload as validate_payload
 
 MAX_INPUT_BYTES = 64 * 1024
 
 
-def read_payload(stream: TextIO) -> Dict[str, Any]:
+def read_payload(stream: TextIO) -> dict[str, Any]:
     raw = stream.read(MAX_INPUT_BYTES + 1)
     if len(raw.encode("utf-8")) > MAX_INPUT_BYTES:
         raise ClientError(EXIT_INPUT, "invalid_input", "Input exceeds 64 KiB.")
@@ -72,7 +72,7 @@ def write_json(stream: TextIO, value: Mapping[str, Any]) -> None:
     stream.write("\n")
 
 
-def main(argv: Optional[Iterable[str]] = None) -> int:
+def main(argv: Iterable[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Call one fixed, read-only AIsa Search operation using JSON from stdin."
     )
