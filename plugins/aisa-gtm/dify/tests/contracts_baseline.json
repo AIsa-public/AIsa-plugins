@@ -185,6 +185,207 @@
   ],
   "schema_sha256": "5af0dc3b8a7033f3cdfa7f13ef0b8d4031e9a601d133225a11f2296fdc35778c"
  },
+ "get_similarweb_demographics": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "format",
+   "granularity",
+   "main_domain_only",
+   "start_date",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "granularity",
+   "start_date"
+  ],
+  "schema_sha256": "8afc900cb41b97d8a969db975c865bfee30840d30e3f3a3c91f2c6ec5b92b35b"
+ },
+ "get_similarweb_keyword_competitors": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "offset",
+   "start_date",
+   "traffic_source",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "c668560621b8f1cff937acc9f89f875ece003a1837f4b88248b6922312d6a215"
+ },
+ "get_similarweb_landing_pages": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "offset",
+   "start_date",
+   "traffic_source",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "b1b445e91f0c1917ded1d7827d54cfec5cb263606025fba0683e3b4e4c50e226"
+ },
+ "get_similarweb_popular_pages": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "offset",
+   "start_date",
+   "traffic_source",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "b1b445e91f0c1917ded1d7827d54cfec5cb263606025fba0683e3b4e4c50e226"
+ },
+ "get_similarweb_ranking": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "main_domain_only",
+   "start_date",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "start_date"
+  ],
+  "schema_sha256": "60119da7571f0cc07703220e2f4e99cb6febe195f61b8346b51e0e5ea7c09288"
+ },
+ "get_similarweb_similar_sites": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "offset",
+   "start_date",
+   "traffic_source",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "96aee8a2cb7b8ff53f4dd2928c3fd447386be3d189b7cab866b784716fd3b963"
+ },
+ "get_similarweb_technologies": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "format",
+   "granularity",
+   "limit",
+   "main_domain_only",
+   "start_date",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "granularity",
+   "limit",
+   "start_date"
+  ],
+  "schema_sha256": "dea2efb717904023121221edb19a082c442f6b2b3885d17a847cff131997d075"
+ },
+ "get_similarweb_traffic_engagement": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain",
+   "end_date",
+   "granularity",
+   "main_domain_only",
+   "metrics",
+   "mtd",
+   "start_date",
+   "web_source"
+  ],
+  "required": [
+   "domain",
+   "end_date",
+   "metrics",
+   "start_date"
+  ],
+  "schema_sha256": "b24976c42b61a8344f4190a8d2486407f8c51b0570f17276742804a98af1e567"
+ },
+ "get_similarweb_website_top_geographies": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ],
+  "schema_sha256": "72f133153b40701b6d89317645e180478b73dd2cbd31d7623e7d5656a976736e"
+ },
+ "get_similarweb_website_traffic_snapshot": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ],
+  "schema_sha256": "f2cfd4016ed9ef55b8de04afa129628c67498cb7bb537a5b5d393a8f9102428b"
+ },
+ "get_similarweb_website_traffic_trend": {
+  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "properties": [
+   "country",
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ],
+  "schema_sha256": "f2cfd4016ed9ef55b8de04afa129628c67498cb7bb537a5b5d393a8f9102428b"
+ },
  "get_twitter_tweet_advanced_search": {
   "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "properties": [
@@ -335,22 +536,6 @@
   ],
   "schema_sha256": "840b2174f16d1ddfbaead758c7bb88f3dacad902177b976d6168015e7cc9c183"
  },
- "post_oxylabs_ai_search": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "geo_location",
-   "parse",
-   "prompt",
-   "query",
-   "render",
-   "search",
-   "source"
-  ],
-  "required": [
-   "source"
-  ],
-  "schema_sha256": "4d6cd7f7178accdb210aef8efb77edf5d5005520de01a81301ae17ad97eb3130"
- },
  "post_tavily_crawl": {
   "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "properties": [
@@ -467,206 +652,5 @@
    "platform"
   ],
   "schema_sha256": "8b7427377f186853a293ad46997ab946da7a88e1818ecd9d24f93b8de6e327e4"
- },
- "similarwebDemographics": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain",
-   "end_date",
-   "format",
-   "granularity",
-   "main_domain_only",
-   "start_date",
-   "web_source"
-  ],
-  "required": [
-   "domain",
-   "end_date",
-   "granularity",
-   "start_date"
-  ],
-  "schema_sha256": "8afc900cb41b97d8a969db975c865bfee30840d30e3f3a3c91f2c6ec5b92b35b"
- },
- "similarwebKeywordCompetitors": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain",
-   "end_date",
-   "granularity",
-   "limit",
-   "main_domain_only",
-   "offset",
-   "start_date",
-   "traffic_source",
-   "web_source"
-  ],
-  "required": [
-   "domain",
-   "end_date",
-   "limit",
-   "start_date"
-  ],
-  "schema_sha256": "b1b445e91f0c1917ded1d7827d54cfec5cb263606025fba0683e3b4e4c50e226"
- },
- "similarwebLandingPages": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain",
-   "end_date",
-   "granularity",
-   "limit",
-   "main_domain_only",
-   "offset",
-   "start_date",
-   "traffic_source",
-   "web_source"
-  ],
-  "required": [
-   "domain",
-   "end_date",
-   "limit",
-   "start_date"
-  ],
-  "schema_sha256": "b1b445e91f0c1917ded1d7827d54cfec5cb263606025fba0683e3b4e4c50e226"
- },
- "similarwebPopularPages": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain",
-   "end_date",
-   "granularity",
-   "limit",
-   "main_domain_only",
-   "offset",
-   "start_date",
-   "traffic_source",
-   "web_source"
-  ],
-  "required": [
-   "domain",
-   "end_date",
-   "limit",
-   "start_date"
-  ],
-  "schema_sha256": "b1b445e91f0c1917ded1d7827d54cfec5cb263606025fba0683e3b4e4c50e226"
- },
- "similarwebRanking": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain",
-   "end_date",
-   "granularity",
-   "main_domain_only",
-   "start_date",
-   "web_source"
-  ],
-  "required": [
-   "domain",
-   "end_date",
-   "start_date"
-  ],
-  "schema_sha256": "60119da7571f0cc07703220e2f4e99cb6febe195f61b8346b51e0e5ea7c09288"
- },
- "similarwebSimilarSites": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain",
-   "end_date",
-   "granularity",
-   "limit",
-   "main_domain_only",
-   "offset",
-   "start_date",
-   "traffic_source",
-   "web_source"
-  ],
-  "required": [
-   "domain",
-   "end_date",
-   "limit",
-   "start_date"
-  ],
-  "schema_sha256": "96aee8a2cb7b8ff53f4dd2928c3fd447386be3d189b7cab866b784716fd3b963"
- },
- "similarwebTechnologies": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain",
-   "end_date",
-   "format",
-   "granularity",
-   "limit",
-   "main_domain_only",
-   "start_date",
-   "web_source"
-  ],
-  "required": [
-   "domain",
-   "end_date",
-   "granularity",
-   "limit",
-   "start_date"
-  ],
-  "schema_sha256": "dea2efb717904023121221edb19a082c442f6b2b3885d17a847cff131997d075"
- },
- "similarwebTrafficEngagement": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain",
-   "end_date",
-   "granularity",
-   "main_domain_only",
-   "metrics",
-   "mtd",
-   "start_date",
-   "web_source"
-  ],
-  "required": [
-   "domain",
-   "end_date",
-   "metrics",
-   "start_date"
-  ],
-  "schema_sha256": "b24976c42b61a8344f4190a8d2486407f8c51b0570f17276742804a98af1e567"
- },
- "similarwebWebsiteTopGeographies": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "domain"
-  ],
-  "required": [
-   "domain"
-  ],
-  "schema_sha256": "72f133153b40701b6d89317645e180478b73dd2cbd31d7623e7d5656a976736e"
- },
- "similarwebWebsiteTrafficSnapshot": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain"
-  ],
-  "required": [
-   "domain"
-  ],
-  "schema_sha256": "f2cfd4016ed9ef55b8de04afa129628c67498cb7bb537a5b5d393a8f9102428b"
- },
- "similarwebWebsiteTrafficTrend": {
-  "pitfalls_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "properties": [
-   "country",
-   "domain"
-  ],
-  "required": [
-   "domain"
-  ],
-  "schema_sha256": "f2cfd4016ed9ef55b8de04afa129628c67498cb7bb537a5b5d393a8f9102428b"
  }
 }
