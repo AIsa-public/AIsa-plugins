@@ -5,7 +5,11 @@ from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
 
 from utils.aisa_client import (
-    AisaApiError, AisaApprovalRequired, AisaClient, generic_summary, truncate_payload,
+    AisaApiError,
+    AisaApprovalRequired,
+    AisaClient,
+    generic_summary,
+    truncate_payload,
 )
 from utils.gtm_common import CostGuard, default_month_range, shift_month_str, today_str
 
@@ -42,7 +46,8 @@ def _resolve_window(client, domain, sw_country, tool_parameters, span: int):
     if tool_parameters.get("approved"):
         try:
             probe = client.request(
-                "GET", "/similarweb/website-traffic-snapshot",
+                "GET",
+                "/similarweb/website-traffic-snapshot",
                 params={"domain": domain, "country": sw_country},
             )
             latest = _latest_published_month(probe)
@@ -70,9 +75,11 @@ def _dated_request(client, path, base_params, start, end, span: int):
         new_end = shift_month_str(end, 1)
         new_start = shift_month_str(new_end, -(span - 1))
         return client.request(
-            "GET", path,
+            "GET",
+            path,
             params={**base_params, "start_date": new_start, "end_date": new_end},
         )
+
 
 _METRICS = (
     "overview",
@@ -93,9 +100,7 @@ _METRICS = (
 class TrafficIntelTool(Tool):
     """Domain traffic, engagement, audience, and authority — Similarweb + Ahrefs."""
 
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         domain = str(tool_parameters.get("domain") or "").strip()
         domain = domain.removeprefix("https://").removeprefix("http://").strip("/")
         metric = str(tool_parameters.get("metric") or "overview").strip().lower()
@@ -103,13 +108,22 @@ class TrafficIntelTool(Tool):
 
         if not domain:
             yield self.create_json_message(
-                {"error": {"code": "INVALID_INPUT", "message": "The 'domain' parameter is required."}}
+                {
+                    "error": {
+                        "code": "INVALID_INPUT",
+                        "message": "The 'domain' parameter is required.",
+                    }
+                }
             )
             return
         if metric not in _METRICS:
             yield self.create_json_message(
-                {"error": {"code": "INVALID_INPUT",
-                           "message": f"Unknown metric '{metric}'. Use one of: {', '.join(_METRICS)}."}}
+                {
+                    "error": {
+                        "code": "INVALID_INPUT",
+                        "message": f"Unknown metric '{metric}'. Use one of: {', '.join(_METRICS)}.",
+                    }
+                }
             )
             return
 
@@ -129,17 +143,20 @@ class TrafficIntelTool(Tool):
             client.set_cost_guard(CostGuard.from_params("traffic_intel", metric, tool_parameters))
             if metric == "overview":
                 result = client.request(
-                    "GET", "/similarweb/website-traffic-snapshot",
+                    "GET",
+                    "/similarweb/website-traffic-snapshot",
                     params={"domain": domain, "country": sw_country},
                 )
             elif metric == "trend":
                 result = client.request(
-                    "GET", "/similarweb/website-traffic-trend",
+                    "GET",
+                    "/similarweb/website-traffic-trend",
                     params={"domain": domain, "country": sw_country},
                 )
             elif metric == "engagement":
                 result = client.request(
-                    "GET", "/similarweb/website/traffic-engagement",
+                    "GET",
+                    "/similarweb/website/traffic-engagement",
                     params={
                         "domain": domain,
                         "start_date": start_date,
@@ -150,7 +167,8 @@ class TrafficIntelTool(Tool):
                 )
             elif metric == "ranking":
                 result = client.request(
-                    "GET", "/similarweb/website/ranking",
+                    "GET",
+                    "/similarweb/website/ranking",
                     params={
                         "domain": domain,
                         "start_date": start_date,
@@ -160,38 +178,53 @@ class TrafficIntelTool(Tool):
                 )
             elif metric == "geographies":
                 result = client.request(
-                    "GET", "/similarweb/website-top-geographies",
+                    "GET",
+                    "/similarweb/website-top-geographies",
                     params={"domain": domain},
                 )
             elif metric == "demographics":
                 # Upstream rule: start and end must be the SAME month.
                 s, e = _resolve_window(client, domain, sw_country, tool_parameters, span=1)
                 result = _dated_request(
-                    client, "/similarweb/website/demographics",
+                    client,
+                    "/similarweb/website/demographics",
                     {"domain": domain, "granularity": "monthly", "country": sw_country},
-                    s, e, span=1,
+                    s,
+                    e,
+                    span=1,
                 )
             elif metric == "similar_sites":
                 # Upstream rule: EXACTLY 3 consecutive months, anchored to
                 # Similarweb's most recent published window.
                 s, e = _resolve_window(client, domain, sw_country, tool_parameters, span=3)
                 result = _dated_request(
-                    client, "/similarweb/website/similar-sites",
+                    client,
+                    "/similarweb/website/similar-sites",
                     {"domain": domain, "limit": 20, "country": sw_country},
-                    s, e, span=3,
+                    s,
+                    e,
+                    span=3,
                 )
             elif metric == "technologies":
                 # Upstream rule: start and end must be the SAME month.
                 s, e = _resolve_window(client, domain, sw_country, tool_parameters, span=1)
                 result = _dated_request(
-                    client, "/similarweb/website/technologies",
-                    {"domain": domain, "granularity": "monthly", "limit": 20,
-                     "country": sw_country},
-                    s, e, span=1,
+                    client,
+                    "/similarweb/website/technologies",
+                    {
+                        "domain": domain,
+                        "granularity": "monthly",
+                        "limit": 20,
+                        "country": sw_country,
+                    },
+                    s,
+                    e,
+                    span=1,
                 )
             elif metric == "popular_pages":
                 result = client.request(
-                    "GET", "/similarweb/website/popular-pages",
+                    "GET",
+                    "/similarweb/website/popular-pages",
                     params={
                         "domain": domain,
                         "start_date": start_date,
@@ -207,9 +240,12 @@ class TrafficIntelTool(Tool):
                 # so route through the self-healing dated flow.
                 s, e = _resolve_window(client, domain, sw_country, tool_parameters, span=3)
                 result = _dated_request(
-                    client, "/similarweb/search/keyword-competitors",
+                    client,
+                    "/similarweb/search/keyword-competitors",
                     {"domain": domain, "limit": 20, "country": sw_country},
-                    s, e, span=3,
+                    s,
+                    e,
+                    span=3,
                 )
             elif metric == "landing_pages":
                 # Where search traffic actually lands on this domain.
@@ -218,18 +254,23 @@ class TrafficIntelTool(Tool):
                 # month interval — single-month window, like demographics.
                 s, e = _resolve_window(client, domain, sw_country, tool_parameters, span=1)
                 result = _dated_request(
-                    client, "/similarweb/search/landing-pages",
+                    client,
+                    "/similarweb/search/landing-pages",
                     {"domain": domain, "limit": 20, "country": sw_country},
-                    s, e, span=1,
+                    s,
+                    e,
+                    span=1,
                 )
             else:  # domain_authority — Ahrefs, two snapshot calls merged
                 snapshot_date = today_str()
                 rating = client.request(
-                    "GET", "/ahrefs/site-explorer/domain-rating",
+                    "GET",
+                    "/ahrefs/site-explorer/domain-rating",
                     params={"target": domain, "date": snapshot_date},
                 )
                 site_metrics = client.request(
-                    "GET", "/ahrefs/site-explorer/metrics",
+                    "GET",
+                    "/ahrefs/site-explorer/metrics",
                     params={"target": domain, "date": snapshot_date},
                 )
                 result = {"domain_rating": rating, "site_metrics": site_metrics}

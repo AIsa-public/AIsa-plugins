@@ -5,7 +5,11 @@ from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
 
 from utils.aisa_client import (
-    AisaApiError, AisaApprovalRequired, AisaClient, find_results, truncate_payload,
+    AisaApiError,
+    AisaApprovalRequired,
+    AisaClient,
+    find_results,
+    truncate_payload,
 )
 from utils.gtm_common import CostGuard
 
@@ -15,9 +19,7 @@ _VALID_MODES = ("search", "extract", "crawl", "map")
 class WebResearchTool(Tool):
     """Tavily-backed web research through the AIsa unified API."""
 
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         mode = str(tool_parameters.get("mode") or "search").strip().lower()
         query = str(tool_parameters.get("query") or "").strip()
         urls = _parse_urls(tool_parameters.get("urls"))
@@ -75,13 +77,9 @@ class WebResearchTool(Tool):
         except AisaApprovalRequired:
             raise  # cost gate, not an upstream failure — no fallback
         except AisaApiError:
-            result = client.request(
-                "POST", "/firecrawl/search", data={"query": query, "limit": 8}
-            )
+            result = client.request("POST", "/firecrawl/search", data={"query": query, "limit": 8})
             if isinstance(result, dict):
-                result["provider_fallback"] = (
-                    "tavily unavailable; served via firecrawl"
-                )
+                result["provider_fallback"] = "tavily unavailable; served via firecrawl"
             return result
 
     def _error(self, message: str, code: str = "INVALID_INPUT") -> ToolInvokeMessage:

@@ -33,9 +33,7 @@ class ManifestTests(unittest.TestCase):
     def test_plugin_names_and_versions_match(self):
         codex = self.load_json(PLUGIN_ROOT / ".codex-plugin" / "plugin.json")
         claude = self.load_json(PLUGIN_ROOT / ".claude-plugin" / "plugin.json")
-        dify_manifest = (PLUGIN_ROOT / "dify" / "manifest.yaml").read_text(
-            encoding="utf-8"
-        )
+        dify_manifest = (PLUGIN_ROOT / "dify" / "manifest.yaml").read_text(encoding="utf-8")
         self.assertEqual(codex["name"], PLUGIN_ROOT.name)
         self.assertEqual(claude["name"], PLUGIN_ROOT.name)
         self.assertEqual(codex["version"].split("+", 1)[0], "0.1.2")

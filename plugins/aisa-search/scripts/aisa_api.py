@@ -17,21 +17,19 @@ sys.path.insert(0, str(DIFY_ROOT))
 from aisa_client import (  # noqa: E402
     DEFAULT_BASE_URL,
     DEFAULT_TIMEOUT_SECONDS,
-    EXIT_AUTH,
     EXIT_INPUT,
-    EXIT_UPSTREAM,
-    MAX_RESPONSE_BYTES,
     OPERATIONS,
-    VERSION,
     ClientError,
     build_request,
     error_envelope,
     execute,
     success_envelope,
     validate_base_url,
-    validate_payload,
 )
-from aisa_client import request  # noqa: E402
+
+# Re-exported for tests/test_aisa_api.py, which patches ``aisa_api.request.urlopen``
+# and calls ``aisa_api.validate_payload`` through this module.
+from aisa_client import request, validate_payload  # noqa: E402, F401
 
 
 MAX_INPUT_BYTES = 64 * 1024

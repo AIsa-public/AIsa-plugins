@@ -46,8 +46,7 @@ def _plugin_version() -> str:
 # version-segment plugin traffic in gateway logs. Quote requests carry the
 # same UA (segment them via the X-AISA-Cost-Mode request header).
 USER_AGENT = (
-    f"aisa-gtm-dify-plugin/{_plugin_version()} "
-    "(+https://github.com/AIsa-public/AIsa-plugins)"
+    f"aisa-gtm-dify-plugin/{_plugin_version()} (+https://github.com/AIsa-public/AIsa-plugins)"
 )
 
 AUTH_HINT = (
@@ -133,7 +132,13 @@ _REQUIRED_PARAMS = {
     "/similarweb/website-top-geographies": {"domain"},
     "/similarweb/website/demographics": {"domain", "start_date", "end_date", "granularity"},
     "/similarweb/website/similar-sites": {"domain", "start_date", "end_date", "limit"},
-    "/similarweb/website/technologies": {"domain", "start_date", "end_date", "granularity", "limit"},
+    "/similarweb/website/technologies": {
+        "domain",
+        "start_date",
+        "end_date",
+        "granularity",
+        "limit",
+    },
     "/similarweb/website/popular-pages": {"domain", "start_date", "end_date", "limit"},
     "/similarweb/search/keyword-competitors": {"domain", "start_date", "end_date", "limit"},
     "/similarweb/search/landing-pages": {"domain", "start_date", "end_date", "limit"},
@@ -193,13 +198,16 @@ class AisaClient:
         when the request carries 'X-AISA-Cost-Mode: quote' — verified live
         2026-09-14: quotes match actual billing, unlike the catalog overlay."""
         body = self._request_once(
-            method, endpoint, params, data, timeout=timeout, retries=0,
+            method,
+            endpoint,
+            params,
+            data,
+            timeout=timeout,
+            retries=0,
             extra_headers={"X-AISA-Cost-Mode": "quote"},
         )
         if not (isinstance(body, dict) and body.get("object") == "cost_estimate"):
-            raise AisaApiError(
-                "QUOTE_UNAVAILABLE", "The endpoint did not return a cost estimate."
-            )
+            raise AisaApiError("QUOTE_UNAVAILABLE", "The endpoint did not return a cost estimate.")
         return body
 
     def _enforce_cost_guard(
@@ -239,17 +247,20 @@ class AisaClient:
         if notice is not None:
             raise AisaApprovalRequired(notice)
         self.call_quotes.append(
-            {"endpoint": endpoint,
-             "estimated_cost_usd": None if price_usd is None else round(price_usd, 6),
-             "source": source}
+            {
+                "endpoint": endpoint,
+                "estimated_cost_usd": None if price_usd is None else round(price_usd, 6),
+                "source": source,
+            }
         )
 
     def cost_disclosure(self) -> Optional[Dict[str, Any]]:
         """Per-call quoted costs for this invocation, for honest output."""
         if not self.call_quotes:
             return None
-        priced = [q["estimated_cost_usd"] for q in self.call_quotes
-                  if q["estimated_cost_usd"] is not None]
+        priced = [
+            q["estimated_cost_usd"] for q in self.call_quotes if q["estimated_cost_usd"] is not None
+        ]
         return {
             "quoted_calls": list(self.call_quotes),
             "quoted_total_usd": round(sum(priced), 6),
@@ -283,23 +294,35 @@ class AisaClient:
             self._enforce_cost_guard(method, endpoint, params, data)
         try:
             return self._request_once(
-                method, endpoint, params, data, timeout, retries,
-                retry_delay_seconds, base_url,
+                method,
+                endpoint,
+                params,
+                data,
+                timeout,
+                retries,
+                retry_delay_seconds,
+                base_url,
             )
         except AisaApiError as e:
             minimal = self._minimal_params(endpoint, params)
             if minimal is None or _CONTRACT_MISMATCH_MARKER not in e.message:
                 raise
             result = self._request_once(
-                method, endpoint, minimal, data, timeout, retries,
-                retry_delay_seconds, base_url,
+                method,
+                endpoint,
+                minimal,
+                data,
+                timeout,
+                retries,
+                retry_delay_seconds,
+                base_url,
             )
             if isinstance(result, dict):
                 dropped = sorted(set(params or {}) - set(minimal))
                 result["_contract_fallback"] = {
                     "dropped_params": dropped,
                     "note": "Endpoint contract drifted upstream; retried with "
-                            "required parameters only.",
+                    "required parameters only.",
                 }
             return result
 
@@ -413,9 +436,7 @@ class AisaClient:
                 else:
                     last_error = AisaApiError("NETWORK_ERROR", f"{type(e).__name__}: {e}")
             except json.JSONDecodeError:
-                last_error = AisaApiError(
-                    "BAD_RESPONSE", "AIsa API returned a non-JSON response."
-                )
+                last_error = AisaApiError("BAD_RESPONSE", "AIsa API returned a non-JSON response.")
                 break
 
         raise last_error or AisaApiError("UNKNOWN_ERROR", "Request failed unexpectedly.")
@@ -454,9 +475,7 @@ class AisaClient:
 
     def credits_balance(self) -> Dict[str, Any]:
         """Account balance — free call, used for credential validation."""
-        return self.request(
-            "GET", "/credits/balance", timeout=30, base_url=self.ACCOUNT_BASE_URL
-        )
+        return self.request("GET", "/credits/balance", timeout=30, base_url=self.ACCOUNT_BASE_URL)
 
     # ---------------------------------------------------------------- tavily
 
@@ -467,9 +486,7 @@ class AisaClient:
         return self.request("POST", "/tavily/extract", data={"urls": urls})
 
     def tavily_crawl(self, url: str, max_depth: int = 2) -> Dict[str, Any]:
-        return self.request(
-            "POST", "/tavily/crawl", data={"url": url, "max_depth": max_depth}
-        )
+        return self.request("POST", "/tavily/crawl", data={"url": url, "max_depth": max_depth})
 
     def tavily_map(self, url: str) -> Dict[str, Any]:
         return self.request("POST", "/tavily/map", data={"url": url})
@@ -488,6 +505,7 @@ def _parse_delimited_text(raw: str) -> Dict[str, Any]:
     rows: List[Dict[str, Any]] = []
     if lines and ";" in lines[0]:
         first = [c.strip() for c in lines[0].split(";")]
+
         # Header row heuristic: no cell in the first row is purely numeric.
         def _is_numericish(cell: str) -> bool:
             return bool(cell) and cell.replace(".", "", 1).replace("-", "", 1).isdigit()
@@ -513,9 +531,24 @@ def find_results(payload: Any) -> List[Dict[str, Any]]:
     if isinstance(payload, list):
         return [r for r in payload if isinstance(r, dict)]
     if isinstance(payload, dict):
-        for key in ("results", "data", "tasks", "items", "records", "pages", "urls",
-                    "people", "organizations", "accounts", "contacts", "creators",
-                    "tweets", "posts", "profiles", "result"):
+        for key in (
+            "results",
+            "data",
+            "tasks",
+            "items",
+            "records",
+            "pages",
+            "urls",
+            "people",
+            "organizations",
+            "accounts",
+            "contacts",
+            "creators",
+            "tweets",
+            "posts",
+            "profiles",
+            "result",
+        ):
             if key in payload:
                 found = find_results(payload[key])
                 if found:
@@ -524,9 +557,21 @@ def find_results(payload: Any) -> List[Dict[str, Any]]:
 
 
 _SUMMARY_ID_KEYS = (
-    "name", "title", "question", "domain", "url", "keyword", "phrase",
-    "handle", "userName", "username", "full_name", "organization_name",
-    "subreddit", "text", "id",
+    "name",
+    "title",
+    "question",
+    "domain",
+    "url",
+    "keyword",
+    "phrase",
+    "handle",
+    "userName",
+    "username",
+    "full_name",
+    "organization_name",
+    "subreddit",
+    "text",
+    "id",
 )
 
 
@@ -545,9 +590,7 @@ def generic_summary(title: str, result: Any, max_items: int = 8) -> str:
                 if actual and item.get(actual) and actual not in keys:
                     keys.append(actual)
             if keys:
-                lines.append(
-                    "- " + ", ".join(f"{k}={str(item[k])[:70]}" for k in keys[:3])
-                )
+                lines.append("- " + ", ".join(f"{k}={str(item[k])[:70]}" for k in keys[:3]))
             else:
                 lines.append("- " + json.dumps(item, ensure_ascii=False)[:140])
         if len(items) > max_items:

@@ -8,9 +8,7 @@ from tools.common import invoke_aisa
 
 
 class TwitterSearchTool(Tool):
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         result = invoke_aisa(
             "twitter_advanced_search",
             {"query": tool_parameters.get("query")},

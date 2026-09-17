@@ -1,0 +1,17 @@
+# AIsa Python profile — see standards/languages/python.md.
+# Applies to every Python plugin in this repo; per-plugin overrides are not allowed.
+line-length = 100
+target-version = "py311"
+
+[lint]
+# Baseline rule set. The Python profile expands this to I / UP / B / SIM
+# together with the mechanical fixes, so the two changes can be reviewed apart.
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+]
+
+[lint.per-file-ignores]
+# Test modules and host entry points insert sys.path before importing plugin code.
+"**/tests/*.py" = ["E402"]
+"**/scripts/*.py" = ["E402"]

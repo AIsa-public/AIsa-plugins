@@ -5,7 +5,11 @@ from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
 
 from utils.aisa_client import (
-    AisaApiError, AisaApprovalRequired, AisaClient, generic_summary, truncate_payload,
+    AisaApiError,
+    AisaApprovalRequired,
+    AisaClient,
+    generic_summary,
+    truncate_payload,
 )
 from utils.gtm_common import CostGuard
 
@@ -15,9 +19,7 @@ _PLATFORMS = ("youtube", "tiktok")
 class FindCreatorsTool(Tool):
     """Creator/influencer discovery via WaveInflu."""
 
-    def _invoke(
-        self, tool_parameters: dict[str, Any]
-    ) -> Generator[ToolInvokeMessage, None, None]:
+    def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage, None, None]:
         mode = str(tool_parameters.get("mode") or "similar").strip().lower()
         profile_url = str(tool_parameters.get("profile_url") or "").strip()
         platform = str(tool_parameters.get("platform") or "youtube").strip().lower()
@@ -29,7 +31,9 @@ class FindCreatorsTool(Tool):
             limit = 10
 
         if mode not in ("similar", "email"):
-            yield self._error("Mode must be 'similar' (find similar creators) or 'email' (contact lookup).")
+            yield self._error(
+                "Mode must be 'similar' (find similar creators) or 'email' (contact lookup)."
+            )
             return
         if not profile_url:
             yield self._error("The 'profile_url' parameter is required — a creator's profile URL.")
@@ -74,6 +78,4 @@ class FindCreatorsTool(Tool):
         )
 
     def _error(self, message: str) -> ToolInvokeMessage:
-        return self.create_json_message(
-            {"error": {"code": "INVALID_INPUT", "message": message}}
-        )
+        return self.create_json_message({"error": {"code": "INVALID_INPUT", "message": message}})
