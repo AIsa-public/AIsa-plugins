@@ -225,6 +225,12 @@ def collect_names(payload, out=None):
     return out
 
 
+def describe_meta(tool):
+    """`AISA_SEARCH_TOOLS(query, limit)` — a meta-tool and its parameter names."""
+    props = ((tool.get("inputSchema") or {}).get("properties") or {}).keys()
+    return f"{tool.get('name')}({', '.join(props)})"
+
+
 def search_router_catalog(meta_tools, query):
     """(meta-tool name, tool names found, raw sample) for a vendor-token query.
 
@@ -423,13 +429,7 @@ def main():
     if missing:
         try:
             meta = router_meta_tools()
-            hints.append(
-                "router meta-tools: "
-                + "; ".join(
-                    f"{t.get('name')}({', '.join(((t.get('inputSchema') or {}).get('properties') or {}).keys())})"
-                    for t in meta
-                )
-            )
+            hints.append("router meta-tools: " + "; ".join(describe_meta(t) for t in meta))
             vendors = sorted(
                 {
                     tok
