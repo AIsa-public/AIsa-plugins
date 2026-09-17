@@ -1,0 +1,67 @@
+name: Work item
+description: "I'm starting on this — tell the team what, where and by when."
+title: "[Work] "
+labels: ["type: work-item", "status: in-progress"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Open this **before** you start. It is the team's live view of who is on what — keep the plan
+        checklist current and add the `status: blocked` label if you need something.
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What you are doing and why, in two or three sentences.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options:
+        - aisa-search
+        - aisa-gtm
+        - marketplace catalogs
+        - ci / standard
+        - docs
+        - new plugin
+        - other
+    validations:
+      required: true
+  - type: checkboxes
+    id: hosts
+    attributes:
+      label: Hosts touched
+      options:
+        - label: Claude Code
+        - label: Codex
+        - label: Dify
+        - label: other / new host
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan
+      description: Tick items off as you go.
+      value: |
+        - [ ]
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+  - type: input
+    id: target
+    attributes:
+      label: Target date
+      placeholder: 2026-10-01
+  - type: textarea
+    id: blockers
+    attributes:
+      label: Dependencies / blockers
+      description: "Anything you need from someone else. Add the `status: blocked` label if it stops you."
+  - type: textarea
+    id: links
+    attributes:
+      label: Links
+      description: Branch, draft PR, design notes, related issues.
