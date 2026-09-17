@@ -1,4 +1,26 @@
+# Editors / OS
 .idea
+.vscode/
+.DS_Store
+Thumbs.db
 
+# Agent-generated working notes
 AGENTS.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# Secrets — CI fails if any of these are tracked
+.env
+.env.*
+!.env.example
+
+# Build outputs
 *.difypkg
+dist/
+build/

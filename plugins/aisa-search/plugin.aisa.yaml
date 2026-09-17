@@ -1,0 +1,20 @@
+# AIsa plugin declaration — read by CI (.github/scripts/discover.py).
+# Schema: CODE_STANDARD.md §9
+schema: 1
+name: aisa-search
+version: "0.1.2"
+description: Search across the web, X, YouTube, and Scholar with linked evidence.
+languages: [python]
+hosts:
+  claude-code: .
+  codex: .
+  dify: dify
+tests:
+  - language: python
+    run: python3 -m unittest discover -s tests
+version_sources:
+  - .claude-plugin/plugin.json
+  - .codex-plugin/plugin.json
+  - dify/manifest.yaml
+  - dify/pyproject.toml
+  - dify/aisa_client.py

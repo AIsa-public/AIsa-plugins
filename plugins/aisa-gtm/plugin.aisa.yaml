@@ -1,0 +1,16 @@
+# AIsa plugin declaration — read by CI (.github/scripts/discover.py).
+# Schema: CODE_STANDARD.md §9
+schema: 1
+name: aisa-gtm
+version: "0.2.0"
+description: Go-to-market data tools (traffic, keywords, social, prospects, creators, AI visibility) for Dify.
+languages: [python]
+hosts:
+  dify: dify
+tests:
+  - language: python
+    cwd: dify
+    run: python3 tests/test_offline.py
+version_sources:
+  - dify/manifest.yaml
+  - dify/pyproject.toml
