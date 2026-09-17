@@ -13,37 +13,10 @@ one [code standard](CODE_STANDARD.md) that CI enforces on every pull request.
 | [`aisa-search`](plugins/aisa-search) | `0.1.2` | Claude Code, Codex, Dify | Search across the web, X, YouTube, and Scholar with linked evidence. | @zhenlonghe |
 <!-- plugins:end -->
 
-The table is generated from each plugin's `plugin.aisa.yaml`; CI fails if it drifts. Every
-plugin needs an `AISA_API_KEY` from [aisa.one](https://aisa.one), supplied through the host's
-credential mechanism — never committed.
-
-### Install
-
-**Claude Code**
-
-```bash
-claude plugin marketplace add AIsa-public/AIsa-plugins
-claude plugin install aisa-search@aisa
-```
-
-Start a new session; the skill is exposed as `/aisa-search:research-topic`.
-
-**Codex**
-
-```bash
-codex plugin marketplace add AIsa-public/AIsa-plugins
-codex plugin add aisa-search@aisa
-```
-
-**Dify** — install from the Dify marketplace (`aisa-team/go-to-market`, `aisa-search`) or
-package from source with the Dify Plugin CLI:
-
-```bash
-dify plugin package ./plugins/aisa-gtm/dify -o go-to-market.difypkg
-dify plugin package ./plugins/aisa-search/dify -o aisa-search.difypkg
-```
-
-Per-plugin setup, configuration and usage live in each plugin's own README (linked above).
+The table is generated from each plugin's `plugin.aisa.yaml`; CI fails if it drifts.
+Installation, configuration and usage for each host live in the plugin's own README
+(linked above). Every plugin needs an `AISA_API_KEY` from [aisa.one](https://aisa.one),
+supplied through the host's credential mechanism — never committed.
 
 ## How a pull request works
 
