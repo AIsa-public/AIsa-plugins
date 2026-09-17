@@ -1,0 +1,177 @@
+name: ci
+
+# Enforces CODE_STANDARD.md on every pull request and on main.
+#
+# The matrix is not hard-coded: `discover` reads every plugins/*/plugin.aisa.yaml and the
+# other jobs fan out over the languages, tests and hosts it declares. Adding a plugin, a
+# language or a host does not require touching this file except to install a runtime or
+# CLI (see the `if: matrix.language == …` / `if: matrix.host == …` steps).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  DIFY_CLI_VERSION: "0.6.10"
+  DIFY_CLI_SHA256: "0cef74bcae375a4337c2ff7d42e4787717981a795e1c23cf56bb27ec07ec8304"
+  ACTIONLINT_VERSION: "1.7.12"
+  ACTIONLINT_SHA256: "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8"
+  GITLEAKS_VERSION: "8.30.1"
+  GITLEAKS_SHA256: "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
+
+jobs:
+  discover:
+    name: discover plugins
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      languages: ${{ steps.discover.outputs.languages }}
+      tests: ${{ steps.discover.outputs.tests }}
+      hosts: ${{ steps.discover.outputs.hosts }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: python3 -m pip install --quiet -r .github/scripts/requirements.txt
+      - id: discover
+        run: python3 .github/scripts/discover.py --github-output
+      - run: python3 .github/scripts/discover.py
+
+  universal:
+    name: universal standard
+    needs: discover
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: python3 -m pip install --quiet -r .github/scripts/requirements.txt
+      - run: python3 .github/scripts/check_universal.py
+
+  lint:
+    name: lint (${{ matrix.language }})
+    needs: discover
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJSON(needs.discover.outputs.languages) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - if: matrix.language == 'python'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - if: matrix.language == 'python'
+        run: python3 -m pip install --quiet -r .github/scripts/requirements.txt
+      - run: bash .github/scripts/lint/${{ matrix.language }}.sh
+
+  test:
+    name: test (${{ matrix.plugin }}, ${{ matrix.language }})
+    needs: discover
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.discover.outputs.tests) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - if: matrix.language == 'python'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - if: matrix.language == 'python'
+        run: python3 -m pip install --quiet -r .github/scripts/requirements.txt
+      - name: ${{ matrix.run }}
+        working-directory: ${{ matrix.cwd }}
+        run: ${{ matrix.run }}
+
+  host:
+    name: host (${{ matrix.plugin }}, ${{ matrix.host }})
+    needs: discover
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.discover.outputs.hosts) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: python3 -m pip install --quiet -r .github/scripts/requirements.txt
+      - if: matrix.host == 'dify'
+        name: Install Dify plugin CLI
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+          curl -fsSL -o "$RUNNER_TEMP/bin/dify" \
+            "https://github.com/langgenius/dify-plugin-daemon/releases/download/${DIFY_CLI_VERSION}/dify-plugin-linux-amd64"
+          echo "${DIFY_CLI_SHA256}  $RUNNER_TEMP/bin/dify" | sha256sum --check --strict
+          chmod +x "$RUNNER_TEMP/bin/dify"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - run: bash .github/scripts/hosts/${{ matrix.host }}.sh "${{ matrix.path }}" "${{ matrix.plugin }}"
+      - if: matrix.host == 'dify'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ matrix.plugin }}-difypkg
+          path: ${{ runner.temp }}/*.difypkg
+          retention-days: 7
+
+  workflows:
+    name: workflow lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install actionlint
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/actionlint.tar.gz" \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
+      - run: ${RUNNER_TEMP}/actionlint -color
+
+  secrets:
+    name: secret scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Install gitleaks
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/gitleaks.tar.gz" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+      - run: ${RUNNER_TEMP}/gitleaks git --no-banner --redact --verbose .
