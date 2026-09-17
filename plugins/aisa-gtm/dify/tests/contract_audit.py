@@ -50,14 +50,14 @@ SENT = {
     "post_tavily_extract": {"urls"},
     "post_tavily_crawl": {"url", "max_depth"},
     "post_tavily_map": {"url"},
-    "similarwebWebsiteTrafficSnapshot": {"domain", "country"},
-    "similarwebWebsiteTrafficTrend": {"domain", "country"},
-    "similarwebTrafficEngagement": {"domain", "start_date", "end_date", "metrics", "country"},
-    "similarwebRanking": {"domain", "start_date", "end_date", "country"},
-    "similarwebWebsiteTopGeographies": {"domain"},
-    "similarwebDemographics": {"domain", "start_date", "end_date", "granularity", "country"},
-    "similarwebSimilarSites": {"domain", "start_date", "end_date", "limit", "country"},
-    "similarwebTechnologies": {
+    "get_similarweb_website_traffic_snapshot": {"domain", "country"},
+    "get_similarweb_website_traffic_trend": {"domain", "country"},
+    "get_similarweb_traffic_engagement": {"domain", "start_date", "end_date", "metrics", "country"},
+    "get_similarweb_ranking": {"domain", "start_date", "end_date", "country"},
+    "get_similarweb_website_top_geographies": {"domain"},
+    "get_similarweb_demographics": {"domain", "start_date", "end_date", "granularity", "country"},
+    "get_similarweb_similar_sites": {"domain", "start_date", "end_date", "limit", "country"},
+    "get_similarweb_technologies": {
         "domain",
         "start_date",
         "end_date",
@@ -65,9 +65,9 @@ SENT = {
         "limit",
         "country",
     },
-    "similarwebPopularPages": {"domain", "start_date", "end_date", "limit", "country"},
-    "similarwebKeywordCompetitors": {"domain", "start_date", "end_date", "limit", "country"},
-    "similarwebLandingPages": {"domain", "start_date", "end_date", "limit", "country"},
+    "get_similarweb_popular_pages": {"domain", "start_date", "end_date", "limit", "country"},
+    "get_similarweb_keyword_competitors": {"domain", "start_date", "end_date", "limit", "country"},
+    "get_similarweb_landing_pages": {"domain", "start_date", "end_date", "limit", "country"},
     "get_ahrefs_domain_rating": {"target", "date"},
     "get_ahrefs_site_metrics": {"target", "date"},
     "get_semrush_keyword_overview": {"phrase"},  # database deliberately omitted
@@ -113,15 +113,8 @@ SENT = {
     "post_firecrawl_search": {"query", "limit"},
     "post_waveinflu_similar_creators": {"platform", "seedProfileUrl", "limit", "contentDirection"},
     "post_waveinflu_email_lookup": {"url"},
-    "post_oxylabs_ai_search": {
-        "source",
-        "prompt",
-        "query",
-        "parse",
-        "geo_location",
-        "render",
-        "search",
-    },
+    # post_oxylabs_ai_search left the router catalog in Sept 2026; the runtime calls
+    # /oxylabs/ai-search over REST with a DataForSEO fallback, so it is not audited here.
 }
 
 # Quote-plane canaries: (method, REST path, params, body). The runtime price
