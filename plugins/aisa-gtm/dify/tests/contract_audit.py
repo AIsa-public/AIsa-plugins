@@ -140,8 +140,8 @@ QUOTE_CANARIES = [
 ]
 
 
-def call_tool(name, args, rid):
-    """One MCP tools/call round-trip; surfaces JSON-RPC error envelopes."""
+def rpc(method, params, rid):
+    """One MCP JSON-RPC round-trip; surfaces error envelopes, returns `result`."""
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json, text/event-stream",
@@ -149,14 +149,7 @@ def call_tool(name, args, rid):
     key = os.environ.get("AISA_API_KEY", "").strip()
     if key:  # discovery requires auth; the schema calls are read-only & free
         headers["Authorization"] = f"Bearer {key}"
-    body = json.dumps(
-        {
-            "jsonrpc": "2.0",
-            "id": rid,
-            "method": "tools/call",
-            "params": {"name": name, "arguments": args},
-        }
-    ).encode()
+    body = json.dumps({"jsonrpc": "2.0", "id": rid, "method": method, "params": params}).encode()
     req = urllib.request.Request(MCP, data=body, headers=headers)
     raw = urllib.request.urlopen(req, timeout=90).read().decode()
     m = re.findall(r"data: (\{.*\})", raw)
@@ -164,7 +157,52 @@ def call_tool(name, args, rid):
     if "error" in payload:
         err = payload["error"]
         raise RuntimeError(f"router error {err.get('code')}: {err.get('message')}")
-    return json.loads(payload["result"]["content"][0]["text"])
+    return payload["result"]
+
+
+def call_tool(name, args, rid):
+    """One MCP tools/call round-trip; returns the tool's JSON payload."""
+    result = rpc("tools/call", {"name": name, "arguments": args}, rid)
+    return json.loads(result["content"][0]["text"])
+
+
+def list_router_tools():
+    """Every tool name the router currently advertises (standard MCP tools/list)."""
+    names, cursor, rid = [], None, 900
+    while True:
+        result = rpc("tools/list", {"cursor": cursor} if cursor else {}, rid)
+        names.extend(t["name"] for t in result.get("tools", []))
+        cursor = result.get("nextCursor")
+        rid += 1
+        if not cursor:
+            return names
+
+
+# Tokens too generic to identify a vendor/tool family when hunting for renames.
+_GENERIC_TOKENS = {
+    "search", "website", "keyword", "keywords", "traffic", "query", "tools", "tool",
+    "data", "get", "post", "list", "fetch", "trend", "pages", "sites", "ranking",
+}  # fmt: skip
+
+
+def name_tokens(name):
+    """`similarwebWebsiteTrafficSnapshot` -> {'similarweb', 'website', 'traffic', 'snapshot'}."""
+    spaced = re.sub(r"([a-z0-9])([A-Z])", r"\1 \2", name)
+    return {t.lower() for t in re.split(r"[\s_\-./]+", spaced) if t}
+
+
+def suggest_renames(missing, live_names):
+    """For each missing tool, live tools sharing a distinctive (vendor-like) token.
+
+    Distinctive = at least 5 characters and not in _GENERIC_TOKENS, so
+    `similarwebRanking` matches `similarweb_website_ranking_v2` but not every
+    tool containing 'ranking'. Returns {missing_name: [candidates...]}."""
+    live_tokens = {n: name_tokens(n) for n in live_names}
+    out = {}
+    for name in missing:
+        keys = {t for t in name_tokens(name) if len(t) >= 5 and t not in _GENERIC_TOKENS}
+        out[name] = sorted(n for n, toks in live_tokens.items() if keys & toks and n != name)
+    return out
 
 
 def fetch_live(names):
@@ -317,8 +355,25 @@ def main():
     quote_hard, quote_info = audit_quotes()
     hard_fail.extend(quote_hard)
 
+    missing = [n for n in names if not live.get(n) or not live[n].get("successful")]
+    hints = []
+    if missing:
+        try:
+            catalog = list_router_tools()
+            hints.append(f"router catalog lists {len(catalog)} tools")
+            for name, cands in suggest_renames(missing, catalog).items():
+                hints.append(
+                    f"{name}: possible renames -> {', '.join(cands)}"
+                    if cands
+                    else f"{name}: no live tool shares a distinctive token (removed, not renamed?)"
+                )
+        except Exception as e:  # listing is best-effort; never masks the verdict
+            hints.append(f"router catalog listing unavailable: {e}")
+
     for line in hard_fail:
         print("FAIL ", line)
+    for line in hints:
+        print("hint ", line)
     for line in drift:
         print("DRIFT", line)
     for line in quote_info:

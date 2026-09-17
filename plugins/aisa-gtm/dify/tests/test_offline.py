@@ -287,6 +287,29 @@ def test_audit_wiring():
     with open(os.path.join(ROOT, "tests", "contracts_baseline.json"), encoding="utf-8") as f:
         baseline = _json.load(f)
     check("baseline covers 44 tools", len(baseline) == 44, f"got {len(baseline)}")
+    renames = contract_audit.suggest_renames(
+        ["similarwebRanking", "post_oxylabs_ai_search"],
+        [
+            "similarweb_website_ranking_v2",
+            "semrushRanking",
+            "oxylabs_ai_search_v2",
+            "tavily_search",
+        ],
+    )
+    check(
+        "rename hints match on vendor tokens only",
+        renames
+        == {
+            "similarwebRanking": ["similarweb_website_ranking_v2"],
+            "post_oxylabs_ai_search": ["oxylabs_ai_search_v2"],
+        },
+        f"got {renames}",
+    )
+    check(
+        "rename hints report removal when nothing shares a token",
+        contract_audit.suggest_renames(["similarwebRanking"], ["tavily_search"])
+        == {"similarwebRanking": []},
+    )
     check(
         "baseline uses the BATCH_GET_SCHEMA-era fields",
         all(
