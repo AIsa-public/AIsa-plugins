@@ -94,3 +94,5 @@ per-language and per-host profiles under [`standards/`](standards) — and CI en
 every pull request. [CONTRIBUTING.md](CONTRIBUTING.md) covers how work is coordinated
 through issues, how to run the checks locally (`bash .github/scripts/check_all.sh`), and
 how to add a plugin, a language or a host.
+
+<!-- ownership-check probe: admin editing outside plugins/ -->
