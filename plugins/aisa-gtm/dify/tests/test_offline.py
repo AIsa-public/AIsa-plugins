@@ -287,6 +287,16 @@ def test_audit_wiring():
     with open(os.path.join(ROOT, "tests", "contracts_baseline.json"), encoding="utf-8") as f:
         baseline = _json.load(f)
     check("baseline covers 44 tools", len(baseline) == 44, f"got {len(baseline)}")
+    check(
+        "baseline uses the BATCH_GET_SCHEMA-era fields",
+        all(
+            {"schema_sha256", "pitfalls_sha256", "properties", "required"} <= set(entry)
+            for entry in baseline.values()
+        ),
+    )
+    sys.path.insert(0, os.path.join(ROOT, "tests"))
+    import contract_audit
+
     renames = contract_audit.suggest_renames(
         ["similarwebRanking", "post_oxylabs_ai_search"],
         [
@@ -310,16 +320,6 @@ def test_audit_wiring():
         contract_audit.suggest_renames(["similarwebRanking"], ["tavily_search"])
         == {"similarwebRanking": []},
     )
-    check(
-        "baseline uses the BATCH_GET_SCHEMA-era fields",
-        all(
-            {"schema_sha256", "pitfalls_sha256", "properties", "required"} <= set(entry)
-            for entry in baseline.values()
-        ),
-    )
-    sys.path.insert(0, os.path.join(ROOT, "tests"))
-    import contract_audit
-
     check(
         "audit SENT map matches the recorded baseline exactly",
         set(contract_audit.SENT) == set(baseline),
