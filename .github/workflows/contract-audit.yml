@@ -1,48 +1,34 @@
 name: AIsa GTM contract-drift audit
 
+# Live drift audit of the GTM tool contracts against the AIsa Tool Router + REST quote
+# plane. Read-only, no credit spent, but it needs the AISA_API_KEY repository secret — so
+# it runs on the weekly schedule and manual dispatch only. The offline suite that used to
+# live here runs on every PR from ci.yml.
+
 on:
   schedule:
-    - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "plugins/aisa-gtm/dify/**"
-      - ".github/workflows/contract-audit.yml"
-  pull_request:
-    paths:
-      - "plugins/aisa-gtm/dify/**"
+
+permissions:
+  contents: read
 
 defaults:
   run:
     working-directory: plugins/aisa-gtm/dify
 
 jobs:
-  offline:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install test dependencies
-        run: pip install pyyaml
-      - name: Offline test suite
-        run: python3 tests/test_offline.py
-
   audit:
-    # Live drift audit against the AIsa Tool Router + REST quote plane.
-    # Needs the AISA_API_KEY repo secret (read-only, free calls); runs on
-    # the weekly schedule and manual dispatch only, so ordinary pushes stay
-    # green even before the secret is configured.
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    needs: offline
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - run: python3 -m pip install --quiet -r ../../../.github/scripts/requirements.txt
       - name: Live contract audit (read-only, no credit spent)
         env:
           AISA_API_KEY: ${{ secrets.AISA_API_KEY }}
