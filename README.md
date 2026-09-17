@@ -1,96 +1,106 @@
-# AIsa Plugins Marketplace
+# AIsa Plugins
 
-Public marketplace for agent plugins maintained by AIsa.
+Public marketplace for agent plugins maintained by AIsa. One repository, many plugins, many
+host platforms (Claude Code, Codex, Dify today) and, over time, many languages — all held to
+one [code standard](CODE_STANDARD.md) that CI enforces on every pull request.
 
-## Available plugins
+## Plugins
 
-### AIsa Search
+<!-- plugins:start -->
+| Plugin | Version | Hosts | Description | Owners |
+|---|---|---|---|---|
+| [`aisa-gtm`](plugins/aisa-gtm) | `0.2.0` | Dify | Go-to-market data tools (traffic, keywords, social, prospects, creators, AI visibility) for Dify. | @lhymmEU |
+| [`aisa-search`](plugins/aisa-search) | `0.1.2` | Claude Code, Codex, Dify | Search across the web, X, YouTube, and Scholar with linked evidence. | @zhenlonghe |
+<!-- plugins:end -->
 
-Search a topic across Tavily web search, X/Twitter, YouTube, and Scholar,
-then produce a structured brief with direct source links.
+The table is generated from each plugin's `plugin.aisa.yaml`; CI fails if it drifts. Every
+plugin needs an `AISA_API_KEY` from [aisa.one](https://aisa.one), supplied through the host's
+credential mechanism — never committed.
 
-- Plugin: `aisa-search`
-- Skill: `research-topic`
-- Version: `0.1.2`
-- Requirements: Python 3.9+ and an `AISA_API_KEY`
+### Install
 
-See [plugins/aisa-search](plugins/aisa-search) for configuration, usage,
-and validation details.
-
-### AIsa Go-to-Market (Dify)
-
-Seven tools for web research, traffic intelligence, keyword/SEO/GEO research,
-social listening, prospecting, creator discovery, and AI answer visibility.
-
-- Directory: `plugins/aisa-gtm/dify`
-- Dify identity: `aisa-team/go-to-market`
-- Version: `0.2.0`
-- Requirements: Python 3.11+ (Dify runner: Python 3.12), Dify 1.7.1+, and an AIsa API key
-- Hosts: Dify only; this bundle is not registered in the Codex or Claude Code catalogs.
-
-See [plugins/aisa-gtm](plugins/aisa-gtm) for source provenance, packaging, and tests.
-
-## Install with Claude Code
+**Claude Code**
 
 ```bash
-claude plugin marketplace add AIsa-plugins/marketplace
+claude plugin marketplace add AIsa-public/AIsa-plugins
 claude plugin install aisa-search@aisa
 ```
 
-Start a new Claude Code session, then try:
+Start a new session; the skill is exposed as `/aisa-search:research-topic`.
 
-```text
-Research the AI coding agent plugin market across web, X, YouTube, and Scholar.
-Return a concise brief with source links.
-```
-
-Claude Code exposes the Skill as `/aisa-search:research-topic`.
-
-## Install with Codex
+**Codex**
 
 ```bash
-codex plugin marketplace add AIsa-plugins/marketplace
+codex plugin marketplace add AIsa-public/AIsa-plugins
 codex plugin add aisa-search@aisa
 ```
 
-Start a new Codex task after installation so bundled Skills are discovered.
-
-## Develop for Dify
-
-The Dify implementation is a host-specific Tool Plugin kept separate from the
-shared Codex and Claude Code bundle. It provides web search, web extraction,
-X/Twitter search, YouTube search, and Scholar search tools.
-
-Package it with the Dify Plugin CLI:
+**Dify** — install from the Dify marketplace (`aisa-team/go-to-market`, `aisa-search`) or
+package from source with the Dify Plugin CLI:
 
 ```bash
-dify plugin package ./plugins/aisa-search/dify
-dify plugin package ./plugins/aisa-gtm/dify -o go-to-market-0.2.0.difypkg
+dify plugin package ./plugins/aisa-gtm/dify -o go-to-market.difypkg
+dify plugin package ./plugins/aisa-search/dify -o aisa-search.difypkg
 ```
 
-See [plugins/aisa-search/dify](plugins/aisa-search/dify) for setup and local
-debugging.
+Per-plugin setup, configuration and usage live in each plugin's own README (linked above).
+
+## How a pull request works
+
+1. **Open a [Work item](../../issues/new/choose)** before non-trivial work. It is labelled
+   `status: in-progress` automatically — the open-issue list is the team's live board.
+2. **Branch from `main`** (`feat/<slug>`, `fix/<slug>`), commit as `scope: imperative summary`,
+   and run `bash .github/scripts/check_all.sh` — the exact sequence CI runs.
+3. **Open the PR** with the template filled in and `Closes #<work item>`. Path labels are
+   applied automatically; the work item moves to `status: in-review`.
+4. **CI (`gate`)** discovers every plugin from its `plugin.aisa.yaml` and runs: universal
+   standard checks → language lint → each plugin's offline tests → host validators (Dify
+   packaging, Claude Code / Codex manifests and catalogs) → workflow lint → secret scan.
+   A plugin declaring a language or host without a profile fails loudly.
+5. **Approval (`ownership`)** depends on the paths you touched — and if you are in the
+   group, nobody has to approve:
+
+   | Files | Approval from |
+   |---|---|
+   | `plugins/<name>/**` | one of that plugin's `owners` |
+   | a plugin not yet on `main` | a repository admin |
+   | anything else | a repository admin |
+
+   Owners ship their own plugin on green CI; admins ship repository changes on green CI;
+   touching someone else's plugin pings its owners and waits for one of them.
+6. **Merge** (merge, squash or rebase) once both required checks are green and the branch is
+   up to date. Nobody pushes to `main` directly, admins included.
+7. **After merge** the work item closes and its status label clears; a version bump is only
+   made after the previous version is live on its marketplace.
+
+## Read this before contributing (humans and agents)
+
+Read in this order — the first three are the whole contract:
+
+| File | What it tells you |
+|---|---|
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Work-item flow, local checks, how to add a plugin / language / host, labels |
+| [`CODE_STANDARD.md`](CODE_STANDARD.md) | The universal rules every plugin must meet, and the `plugin.aisa.yaml` schema |
+| [`standards/`](standards) | Per-language (`languages/python.md`) and per-host (`hosts/dify.md`, `claude-code.md`, `codex.md`) profiles — required files, tooling, packaging |
+| [`plugins/<name>/plugin.aisa.yaml`](plugins/aisa-search/plugin.aisa.yaml) | A real declaration to copy: name, version, owners, languages, hosts, tests, version sources |
+| [`.github/scripts/check_all.sh`](.github/scripts/check_all.sh) | One command that runs everything CI runs; the scripts next to it are the checks themselves |
+| [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) · [`ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE) | What a PR and a work item must say |
+| [`.github/workflows/ci.yml`](.github/workflows/ci.yml) · [`ownership.yml`](.github/workflows/ownership.yml) | The gate and the approval policy, as executed |
+| [`.github/CODEOWNERS`](.github/CODEOWNERS) | Who gets asked to review what (routing; the policy is `ownership.yml`) |
+
+Agents: the standard is machine-checked, so run `check_all.sh` and fix what it reports rather
+than guessing; never hand-edit generated blocks (this README's plugin table) — regenerate them.
 
 ## Repository layout
 
 ```text
-.agents/plugins/marketplace.json     Codex marketplace
-.claude-plugin/marketplace.json      Claude Code marketplace
-plugins/<name>/plugin.aisa.yaml      Plugin declaration CI reads (languages, hosts, tests)
-plugins/aisa-search/                 Shared plugin bundle
-plugins/aisa-search/dify/            Dify-specific Tool Plugin
-plugins/aisa-gtm/dify/               Dify-specific Go-to-Market Tool Plugin
-standards/                           Language and host profiles of the code standard
-.github/scripts/                     The CI checks; run them locally with check_all.sh
+plugins/<name>/                     one plugin; plugin.aisa.yaml + README.md at the root
+plugins/<name>/<host>/              host-specific implementation (e.g. dify/)
+.claude-plugin/marketplace.json     Claude Code catalog
+.agents/plugins/marketplace.json    Codex catalog
+standards/                          language and host profiles of the code standard
+.github/scripts/                    the CI checks (check_all.sh runs them all locally)
+.github/workflows/                  ci.yml (gate), ownership.yml, labels, status automation
 ```
 
-The plugin contains no API keys. Set `AISA_API_KEY` in the environment that
-launches the agent. Do not commit `.env` files or credentials.
-
-## Contributing
-
-Every plugin is held to the [AIsa Code Standard](CODE_STANDARD.md) — universal rules plus
-per-language and per-host profiles under [`standards/`](standards) — and CI enforces it on
-every pull request. [CONTRIBUTING.md](CONTRIBUTING.md) covers how work is coordinated
-through issues, how to run the checks locally (`bash .github/scripts/check_all.sh`), and
-how to add a plugin, a language or a host.
+No API keys live in this repository. `.env` files are ignored and CI fails if one is tracked.
