@@ -14,6 +14,7 @@ matrix="$(python3 "$scripts/discover.py" --tsv)"
 
 section "universal standard"
 run python3 "$scripts/check_universal.py"
+run python3 "$scripts/readme_plugins.py" --check
 
 section "CI script unit tests"
 run bash -c "cd '$scripts' && python3 -m unittest discover -s tests"

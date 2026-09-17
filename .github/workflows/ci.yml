@@ -64,6 +64,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - run: python3 -m pip install --quiet -r .github/scripts/requirements.txt
       - run: python3 .github/scripts/check_universal.py
+      - run: python3 .github/scripts/readme_plugins.py --check
       - name: CI script unit tests
         working-directory: .github/scripts
         run: python3 -m unittest discover -s tests

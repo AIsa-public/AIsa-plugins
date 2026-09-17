@@ -69,7 +69,10 @@ scripts, so green locally means green in the PR.
 4. Register the plugin in the marketplace catalogs the hosts use.
 5. Add an `area: <name>` label to `.github/labels.json`, a path rule to `.github/labeler.yml`,
    and a `/plugins/<name>/` line in `.github/CODEOWNERS` listing the same `owners`.
-6. `bash .github/scripts/check_all.sh` → open the PR.
+6. Regenerate the plugin table in the root README:
+   `python3 .github/scripts/readme_plugins.py --write` (CI fails if it is stale; the same
+   applies after a version bump or an owner change).
+7. `bash .github/scripts/check_all.sh` → open the PR.
 
 ## 6. Add a language or a host
 
