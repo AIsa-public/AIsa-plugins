@@ -1,4 +1,4 @@
-# AIsa Tools (Cursor)
+# AIsa (Cursor)
 
 `aisa` is a Cursor plugin that connects the agent to the live AIsa Tool Router
 MCP at [https://tools.aisa.one/mcp](https://tools.aisa.one/mcp) over Streamable HTTP
