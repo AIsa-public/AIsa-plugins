@@ -85,6 +85,10 @@ class AisaToolsManifestTests(unittest.TestCase):
         # The plugin already registers the MCP server; the skill must not push CLI installs.
         self.assertNotIn("npm install", text)
         self.assertNotIn("npx", text)
+        # MCP-only: no CLI fallback, no unrelated host/provider triggers.
+        for needle in ("aisa connect", "aisa search", "@aisa-one/cli", "OpenClaw", "aisa-provider"):
+            self.assertNotIn(needle, text)
+        self.assertIn("Cursor Settings", text)
         self.assertIn("MIT License", (skill_dir / "LICENSE").read_text(encoding="utf-8"))
 
     def test_readme_documents_local_and_marketplace(self) -> None:
