@@ -21,12 +21,13 @@
 "host: dify":
   - changed-files:
       - any-glob-to-any-file: ["plugins/*/dify/**"]
+# Skills are shared packaging; only host-specific manifests imply a host label.
 "host: claude-code":
   - changed-files:
-      - any-glob-to-any-file: ["plugins/*/.claude-plugin/**", "plugins/*/skills/**", ".claude-plugin/**"]
+      - any-glob-to-any-file: ["plugins/*/.claude-plugin/**", ".claude-plugin/**"]
 "host: codex":
   - changed-files:
-      - any-glob-to-any-file: ["plugins/*/.codex-plugin/**", "plugins/*/skills/**", ".agents/**"]
+      - any-glob-to-any-file: ["plugins/*/.codex-plugin/**", ".agents/**"]
 "host: cursor":
   - changed-files:
-      - any-glob-to-any-file: ["plugins/*/.cursor-plugin/**", "plugins/*/mcp.json", ".cursor-plugin/**"]
+      - any-glob-to-any-file: ["plugins/*/.cursor-plugin/**", "plugins/*/mcp.json", "plugins/*/skills/**", ".cursor-plugin/**"]
