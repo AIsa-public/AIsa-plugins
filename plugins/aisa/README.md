@@ -1,11 +1,15 @@
-# AIsa Tools (Cursor)
+# AIsa (Cursor)
 
-`aisa-tools` is a Cursor plugin that connects the agent to the live AIsa Tool Router
+`aisa` is a Cursor plugin that connects the agent to the live AIsa Tool Router
 MCP at [https://tools.aisa.one/mcp](https://tools.aisa.one/mcp) over Streamable HTTP
-with OAuth. The same package is the install surface for Grok Bot.
+with OAuth.
 
 No API keys or secrets are stored in this repository. Cursor prompts for OAuth when
 the MCP server is first used.
+
+Privacy: requests carry only an anonymous plugin `User-Agent` (see [Attribution](#attribution))
+and no end-user identifiers. Support: [developer@aisa.one](mailto:developer@aisa.one) or
+[GitHub Issues](https://github.com/AIsa-public/AIsa-plugins/issues).
 
 ## Requirements
 
@@ -19,16 +23,22 @@ the MCP server is first used.
 
    ```bash
    mkdir -p ~/.cursor/plugins/local
-   cp -R plugins/aisa-tools ~/.cursor/plugins/local/aisa-tools
+   rm -rf ~/.cursor/plugins/local/aisa
+   cp -R plugins/aisa ~/.cursor/plugins/local/aisa
    ```
 
    From a clone of this repository the path above is relative to the repo root. The
-   install root must be exactly `~/.cursor/plugins/local/aisa-tools` with
-   `.cursor-plugin/plugin.json` directly under it (not nested one level deeper).
+   `rm -rf` makes re-running safe: without it, `cp -R` into an existing directory
+   nests a second copy at `~/.cursor/plugins/local/aisa/aisa`. The
+   install root must be exactly `~/.cursor/plugins/local/aisa` with
+   `.cursor-plugin/plugin.json` directly under it.
+
+   If `aisa` is already installed from the Marketplace, the Marketplace copy may
+   take precedence over the local one — uninstall it first when testing local changes.
 
 2. Restart Cursor, or run **Developer: Reload Window**.
 
-3. Open **Customize** and confirm the `aisa-tools` MCP server appears. Complete the
+3. Open **Customize** and confirm the `aisa` MCP server appears. Complete the
    OAuth flow when prompted.
 
 On Teams / Enterprise, an admin may need to enable **Allow Local Plugin Imports**
@@ -36,7 +46,7 @@ under Dashboard → Settings → Security & Identity → Marketplace and Plugins
 
 ## Marketplace publish
 
-1. Ensure this repository (or a public fork that contains `plugins/aisa-tools`) is
+1. Ensure this repository (or a public fork that contains `plugins/aisa`) is
    reachable over HTTPS.
 2. Submit the repository at [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish).
 3. For a multi-plugin marketplace layout, the root catalog is
@@ -46,12 +56,18 @@ under Dashboard → Settings → Security & Identity → Marketplace and Plugins
 Cursor reviews marketplace submissions manually. Do not claim an official featured
 listing unless Cursor grants one.
 
+## Skills
+
+- [`skills/aisa`](skills/aisa/SKILL.md) guides the agent through the Tool Router
+  search → schema → quote → call workflow over this plugin's MCP server. Adapted from
+  [AIsa-team/agent-skills](https://github.com/AIsa-team/agent-skills) (MIT).
+
 ## MCP endpoint
 
 ```json
 {
   "mcpServers": {
-    "aisa-tools": {
+    "aisa": {
       "type": "http",
       "url": "https://tools.aisa.one/mcp"
     }
@@ -67,7 +83,7 @@ The committed [`mcp.json`](mcp.json) also sets a `User-Agent` attribution token
 Every MCP request identifies this plugin to AIsa without identifying the end user:
 
 ```text
-aisa-aisa-tools-cursor-plugin/<version> (+https://github.com/AIsa-public/AIsa-plugins)
+aisa-aisa-cursor-plugin/<version> (+https://github.com/AIsa-public/AIsa-plugins)
 ```
 
 `<version>` must match `.cursor-plugin/plugin.json` / `plugin.aisa.yaml`. Offline tests
@@ -75,16 +91,22 @@ assert the exact token.
 
 ## Offline tests
 
+The tests read `plugin.aisa.yaml` and need PyYAML:
+
+```bash
+pip install pyyaml
+```
+
 From the repository root (or from this directory with the paths adjusted):
 
 ```bash
-python3 -m unittest discover -s plugins/aisa-tools/tests -v
+python3 -m unittest discover -s plugins/aisa/tests -v
 ```
 
 Or via the plugin declaration:
 
 ```bash
-cd plugins/aisa-tools && python3 -m unittest discover -s tests -v
+cd plugins/aisa && python3 -m unittest discover -s tests -v
 ```
 
 No network and no credentials are required.
@@ -94,6 +116,6 @@ No network and no credentials are required.
 From the repository root:
 
 ```bash
-bash .github/scripts/hosts/cursor.sh plugins/aisa-tools aisa-tools
+bash .github/scripts/hosts/cursor.sh plugins/aisa aisa
 bash .github/scripts/check_all.sh
 ```

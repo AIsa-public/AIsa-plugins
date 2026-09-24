@@ -5,15 +5,19 @@
     "email": "developer@aisa.one"
   },
   "metadata": {
-    "description": "AIsa public plugin marketplace — Tool Router MCP and productivity plugins for Cursor."
+    "description": "AIsa public plugin marketplace \u2014 Tool Router MCP and productivity plugins for Cursor."
   },
   "plugins": [
     {
-      "name": "aisa-tools",
-      "source": "./plugins/aisa-tools",
+      "name": "aisa",
+      "source": "./plugins/aisa",
       "description": "Connect to the AIsa Tool Router MCP (Streamable HTTP + OAuth) for search, data, and productivity tools.",
       "category": "integrations",
-      "tags": ["aisa", "mcp", "tools"]
+      "tags": [
+        "aisa",
+        "mcp",
+        "tools"
+      ]
     }
   ]
 }
