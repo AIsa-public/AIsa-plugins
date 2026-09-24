@@ -5,9 +5,12 @@
 "area: aisa-gtm":
   - changed-files:
       - any-glob-to-any-file: ["plugins/aisa-gtm/**"]
+"area: aisa-tools":
+  - changed-files:
+      - any-glob-to-any-file: ["plugins/aisa-tools/**"]
 "area: marketplace":
   - changed-files:
-      - any-glob-to-any-file: [".claude-plugin/**", ".agents/**", "README.md"]
+      - any-glob-to-any-file: [".claude-plugin/**", ".agents/**", ".cursor-plugin/**", "README.md"]
 "area: ci":
   - changed-files:
       - any-glob-to-any-file: [".github/**"]
@@ -24,3 +27,6 @@
 "host: codex":
   - changed-files:
       - any-glob-to-any-file: ["plugins/*/.codex-plugin/**", "plugins/*/skills/**", ".agents/**"]
+"host: cursor":
+  - changed-files:
+      - any-glob-to-any-file: ["plugins/*/.cursor-plugin/**", "plugins/*/mcp.json", ".cursor-plugin/**"]

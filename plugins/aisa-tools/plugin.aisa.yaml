@@ -1,0 +1,15 @@
+# AIsa plugin declaration — read by CI (.github/scripts/discover.py).
+# Schema: CODE_STANDARD.md §9
+schema: 1
+name: aisa-tools
+version: "0.1.0"
+owners: [eddiearc]
+description: Connect Cursor (and Grok Bot) to the AIsa Tool Router MCP at tools.aisa.one.
+languages: [python]
+hosts:
+  cursor: .
+tests:
+  - language: python
+    run: python3 -m unittest discover -s tests
+version_sources:
+  - .cursor-plugin/plugin.json

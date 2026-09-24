@@ -18,7 +18,7 @@ import discover
 README = discover.REPO / "README.md"
 START = "<!-- plugins:start -->"
 END = "<!-- plugins:end -->"
-HOST_LABELS = {"claude-code": "Claude Code", "codex": "Codex", "dify": "Dify"}
+HOST_LABELS = {"claude-code": "Claude Code", "codex": "Codex", "dify": "Dify", "cursor": "Cursor"}
 
 
 def render() -> str:

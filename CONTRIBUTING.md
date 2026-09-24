@@ -92,7 +92,7 @@ Until both exist, CI refuses any plugin that declares the new language or host â
 | `type:` | `bug`, `feature`, `work-item`, `chore`, `docs` |
 | `status:` | `planned`, `in-progress`, `blocked`, `in-review` |
 | `area:` | one per plugin, plus `marketplace`, `ci`, `standard` |
-| `host:` | `claude-code`, `codex`, `dify` |
+| `host:` | `claude-code`, `codex`, `dify`, `cursor` |
 
 Labels are declared in `.github/labels.json` and synced by a workflow; edit the file, not
 the GitHub UI.

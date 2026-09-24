@@ -1,7 +1,7 @@
 # AIsa Plugins
 
 Public marketplace for agent plugins maintained by AIsa. One repository, many plugins, many
-host platforms (Claude Code, Codex, Dify today) and, over time, many languages — all held to
+host platforms (Claude Code, Codex, Dify, Cursor today) and, over time, many languages — all held to
 one [code standard](CODE_STANDARD.md) that CI enforces on every pull request.
 
 ## Plugins
@@ -11,6 +11,7 @@ one [code standard](CODE_STANDARD.md) that CI enforces on every pull request.
 |---|---|---|---|---|
 | [`aisa-gtm`](plugins/aisa-gtm) | `0.2.0` | Dify | Go-to-market data tools (traffic, keywords, social, prospects, creators, AI visibility) for Dify. | @lhymmEU |
 | [`aisa-search`](plugins/aisa-search) | `0.1.2` | Claude Code, Codex, Dify | Search across the web, X, YouTube, and Scholar with linked evidence. | @zhenlonghe |
+| [`aisa-tools`](plugins/aisa-tools) | `0.1.0` | Cursor | Connect Cursor (and Grok Bot) to the AIsa Tool Router MCP at tools.aisa.one. | @eddiearc |
 <!-- plugins:end -->
 
 The table is generated from each plugin's `plugin.aisa.yaml`; CI fails if it drifts.
@@ -80,7 +81,7 @@ Read in this order — the first three are the whole contract:
 |---|---|
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Work-item flow, local checks, how to add a plugin / language / host, labels |
 | [`CODE_STANDARD.md`](CODE_STANDARD.md) | The universal rules every plugin must meet, and the `plugin.aisa.yaml` schema |
-| [`standards/`](standards) | Per-language (`languages/python.md`) and per-host (`hosts/dify.md`, `claude-code.md`, `codex.md`) profiles — required files, tooling, packaging |
+| [`standards/`](standards) | Per-language (`languages/python.md`) and per-host (`hosts/dify.md`, `claude-code.md`, `codex.md`, `cursor.md`) profiles — required files, tooling, packaging |
 | [`plugins/<name>/plugin.aisa.yaml`](plugins/aisa-search/plugin.aisa.yaml) | A real declaration to copy: name, version, owners, languages, hosts, tests, version sources |
 | [`.github/scripts/check_all.sh`](.github/scripts/check_all.sh) | One command that runs everything CI runs; the scripts next to it are the checks themselves |
 | [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) · [`ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE) | What a PR and a work item must say |
@@ -97,6 +98,7 @@ plugins/<name>/                     one plugin; plugin.aisa.yaml + README.md at 
 plugins/<name>/<host>/              host-specific implementation (e.g. dify/)
 .claude-plugin/marketplace.json     Claude Code catalog
 .agents/plugins/marketplace.json    Codex catalog
+.cursor-plugin/marketplace.json     Cursor catalog
 standards/                          language and host profiles of the code standard
 .github/scripts/                    the CI checks (check_all.sh runs them all locally)
 .github/workflows/                  ci.yml (gate), ownership.yml, labels, status automation

@@ -12,11 +12,13 @@
 
   { "name": "area: aisa-search",   "color": "bfd4f2", "description": "plugins/aisa-search" },
   { "name": "area: aisa-gtm",      "color": "bfd4f2", "description": "plugins/aisa-gtm" },
+  { "name": "area: aisa-tools",    "color": "bfd4f2", "description": "plugins/aisa-tools" },
   { "name": "area: marketplace",   "color": "bfd4f2", "description": "Marketplace catalogs and root README" },
   { "name": "area: ci",            "color": "bfd4f2", "description": "Workflows and CI scripts" },
   { "name": "area: standard",      "color": "bfd4f2", "description": "CODE_STANDARD.md, profiles, lint config" },
 
   { "name": "host: claude-code",   "color": "f9d0c4", "description": "Claude Code bundle" },
   { "name": "host: codex",         "color": "f9d0c4", "description": "Codex bundle" },
-  { "name": "host: dify",          "color": "f9d0c4", "description": "Dify tool plugin" }
+  { "name": "host: dify",          "color": "f9d0c4", "description": "Dify tool plugin" },
+  { "name": "host: cursor",        "color": "f9d0c4", "description": "Cursor plugin" }
 ]
