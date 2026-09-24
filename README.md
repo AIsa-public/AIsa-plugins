@@ -9,9 +9,9 @@ one [code standard](CODE_STANDARD.md) that CI enforces on every pull request.
 <!-- plugins:start -->
 | Plugin | Version | Hosts | Description | Owners |
 |---|---|---|---|---|
+| [`aisa`](plugins/aisa) | `0.1.0` | Cursor | Connect Cursor to the AIsa Tool Router MCP at tools.aisa.one. | @eddiearc |
 | [`aisa-gtm`](plugins/aisa-gtm) | `0.2.0` | Dify | Go-to-market data tools (traffic, keywords, social, prospects, creators, AI visibility) for Dify. | @lhymmEU |
 | [`aisa-search`](plugins/aisa-search) | `0.1.2` | Claude Code, Codex, Dify | Search across the web, X, YouTube, and Scholar with linked evidence. | @zhenlonghe |
-| [`aisa-tools`](plugins/aisa-tools) | `0.1.0` | Cursor | Connect Cursor to the AIsa Tool Router MCP at tools.aisa.one. | @eddiearc |
 <!-- plugins:end -->
 
 The table is generated from each plugin's `plugin.aisa.yaml`; CI fails if it drifts.

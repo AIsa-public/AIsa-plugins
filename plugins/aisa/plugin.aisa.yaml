@@ -1,7 +1,7 @@
 # AIsa plugin declaration — read by CI (.github/scripts/discover.py).
 # Schema: CODE_STANDARD.md §9
 schema: 1
-name: aisa-tools
+name: aisa
 version: "0.1.0"
 owners: [eddiearc]
 description: Connect Cursor to the AIsa Tool Router MCP at tools.aisa.one.

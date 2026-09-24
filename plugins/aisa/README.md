@@ -1,6 +1,6 @@
 # AIsa Tools (Cursor)
 
-`aisa-tools` is a Cursor plugin that connects the agent to the live AIsa Tool Router
+`aisa` is a Cursor plugin that connects the agent to the live AIsa Tool Router
 MCP at [https://tools.aisa.one/mcp](https://tools.aisa.one/mcp) over Streamable HTTP
 with OAuth.
 
@@ -23,22 +23,22 @@ and no end-user identifiers. Support: [developer@aisa.one](mailto:developer@aisa
 
    ```bash
    mkdir -p ~/.cursor/plugins/local
-   rm -rf ~/.cursor/plugins/local/aisa-tools
-   cp -R plugins/aisa-tools ~/.cursor/plugins/local/aisa-tools
+   rm -rf ~/.cursor/plugins/local/aisa
+   cp -R plugins/aisa ~/.cursor/plugins/local/aisa
    ```
 
    From a clone of this repository the path above is relative to the repo root. The
    `rm -rf` makes re-running safe: without it, `cp -R` into an existing directory
-   nests a second copy at `~/.cursor/plugins/local/aisa-tools/aisa-tools`. The
-   install root must be exactly `~/.cursor/plugins/local/aisa-tools` with
+   nests a second copy at `~/.cursor/plugins/local/aisa/aisa`. The
+   install root must be exactly `~/.cursor/plugins/local/aisa` with
    `.cursor-plugin/plugin.json` directly under it.
 
-   If `aisa-tools` is already installed from the Marketplace, the Marketplace copy may
+   If `aisa` is already installed from the Marketplace, the Marketplace copy may
    take precedence over the local one — uninstall it first when testing local changes.
 
 2. Restart Cursor, or run **Developer: Reload Window**.
 
-3. Open **Customize** and confirm the `aisa-tools` MCP server appears. Complete the
+3. Open **Customize** and confirm the `aisa` MCP server appears. Complete the
    OAuth flow when prompted.
 
 On Teams / Enterprise, an admin may need to enable **Allow Local Plugin Imports**
@@ -46,7 +46,7 @@ under Dashboard → Settings → Security & Identity → Marketplace and Plugins
 
 ## Marketplace publish
 
-1. Ensure this repository (or a public fork that contains `plugins/aisa-tools`) is
+1. Ensure this repository (or a public fork that contains `plugins/aisa`) is
    reachable over HTTPS.
 2. Submit the repository at [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish).
 3. For a multi-plugin marketplace layout, the root catalog is
@@ -67,7 +67,7 @@ listing unless Cursor grants one.
 ```json
 {
   "mcpServers": {
-    "aisa-tools": {
+    "aisa": {
       "type": "http",
       "url": "https://tools.aisa.one/mcp"
     }
@@ -83,7 +83,7 @@ The committed [`mcp.json`](mcp.json) also sets a `User-Agent` attribution token
 Every MCP request identifies this plugin to AIsa without identifying the end user:
 
 ```text
-aisa-aisa-tools-cursor-plugin/<version> (+https://github.com/AIsa-public/AIsa-plugins)
+aisa-aisa-cursor-plugin/<version> (+https://github.com/AIsa-public/AIsa-plugins)
 ```
 
 `<version>` must match `.cursor-plugin/plugin.json` / `plugin.aisa.yaml`. Offline tests
@@ -100,13 +100,13 @@ pip install pyyaml
 From the repository root (or from this directory with the paths adjusted):
 
 ```bash
-python3 -m unittest discover -s plugins/aisa-tools/tests -v
+python3 -m unittest discover -s plugins/aisa/tests -v
 ```
 
 Or via the plugin declaration:
 
 ```bash
-cd plugins/aisa-tools && python3 -m unittest discover -s tests -v
+cd plugins/aisa && python3 -m unittest discover -s tests -v
 ```
 
 No network and no credentials are required.
@@ -116,6 +116,6 @@ No network and no credentials are required.
 From the repository root:
 
 ```bash
-bash .github/scripts/hosts/cursor.sh plugins/aisa-tools aisa-tools
+bash .github/scripts/hosts/cursor.sh plugins/aisa aisa
 bash .github/scripts/check_all.sh
 ```

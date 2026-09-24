@@ -12,7 +12,7 @@
 
   { "name": "area: aisa-search",   "color": "bfd4f2", "description": "plugins/aisa-search" },
   { "name": "area: aisa-gtm",      "color": "bfd4f2", "description": "plugins/aisa-gtm" },
-  { "name": "area: aisa-tools",    "color": "bfd4f2", "description": "plugins/aisa-tools" },
+  { "name": "area: aisa",          "color": "bfd4f2", "description": "plugins/aisa" },
   { "name": "area: marketplace",   "color": "bfd4f2", "description": "Marketplace catalogs and root README" },
   { "name": "area: ci",            "color": "bfd4f2", "description": "Workflows and CI scripts" },
   { "name": "area: standard",      "color": "bfd4f2", "description": "CODE_STANDARD.md, profiles, lint config" },

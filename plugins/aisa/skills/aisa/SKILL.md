@@ -1,18 +1,18 @@
 ---
 name: aisa
-description: "Discover and invoke published AIsa tools through the aisa-tools plugin MCP server (search, schema, quote, call). Use when the user wants AIsa tools, or needs current web, company, or social data that AIsa tools can fetch, even if they do not name AIsa. Do not use for work that does not need live AIsa data."
+description: "Discover and invoke published AIsa tools through the aisa plugin MCP server (search, schema, quote, call). Use when the user wants AIsa tools, or needs current web, company, or social data that AIsa tools can fetch, even if they do not name AIsa. Do not use for work that does not need live AIsa data."
 license: MIT
 ---
 
 # AIsa
 
-This plugin already registers the AIsa Tool Router MCP server (`aisa-tools`, Streamable HTTP with OAuth at `https://tools.aisa.one/mcp`). Use its tools directly. Do not install packages or other skills, and do not re-add the MCP server.
+This plugin already registers the AIsa Tool Router MCP server (`aisa`, Streamable HTTP with OAuth at `https://tools.aisa.one/mcp`). Use its tools directly. Do not install packages or other skills, and do not re-add the MCP server.
 
 If the user named another tool, or a dedicated local tool already covers the job, do not force AIsa.
 
 ## Connection
 
-Cursor owns the OAuth browser sign-in and tokens. Never print credentials. If the `AISA_*` tools are missing or a call reports that sign-in is required, tell the user to open Cursor Settings → MCP → `aisa-tools` → Connect (or log in), and do not claim it is connected until it is. A 401 means sign-in is required; it is not a successful call. Do not treat a domain-specific MCP server as this router.
+Cursor owns the OAuth browser sign-in and tokens. Never print credentials. If the `AISA_*` tools are missing or a call reports that sign-in is required, tell the user to open Cursor Settings → MCP → `aisa` → Connect (or log in), and do not claim it is connected until it is. A 401 means sign-in is required; it is not a successful call. Do not treat a domain-specific MCP server as this router.
 
 ## Tools
 

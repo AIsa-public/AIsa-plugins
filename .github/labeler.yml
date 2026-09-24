@@ -5,9 +5,9 @@
 "area: aisa-gtm":
   - changed-files:
       - any-glob-to-any-file: ["plugins/aisa-gtm/**"]
-"area: aisa-tools":
+"area: aisa":
   - changed-files:
-      - any-glob-to-any-file: ["plugins/aisa-tools/**"]
+      - any-glob-to-any-file: ["plugins/aisa/**"]
 "area: marketplace":
   - changed-files:
       - any-glob-to-any-file: [".claude-plugin/**", ".agents/**", ".cursor-plugin/**", "README.md"]

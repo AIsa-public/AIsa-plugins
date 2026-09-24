@@ -1,5 +1,5 @@
 {
-  "name": "aisa-tools",
+  "name": "aisa",
   "displayName": "AIsa Tools",
   "version": "0.1.0",
   "description": "Connect to the AIsa Tool Router MCP (Streamable HTTP + OAuth) for search, data, and productivity tools.",
