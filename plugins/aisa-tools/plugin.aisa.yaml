@@ -4,7 +4,7 @@ schema: 1
 name: aisa-tools
 version: "0.1.0"
 owners: [eddiearc]
-description: Connect Cursor (and Grok Bot) to the AIsa Tool Router MCP at tools.aisa.one.
+description: Connect Cursor to the AIsa Tool Router MCP at tools.aisa.one.
 languages: [python]
 hosts:
   cursor: .

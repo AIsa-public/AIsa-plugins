@@ -2,10 +2,14 @@
 
 `aisa-tools` is a Cursor plugin that connects the agent to the live AIsa Tool Router
 MCP at [https://tools.aisa.one/mcp](https://tools.aisa.one/mcp) over Streamable HTTP
-with OAuth. The same package is the install surface for Grok Bot.
+with OAuth.
 
 No API keys or secrets are stored in this repository. Cursor prompts for OAuth when
 the MCP server is first used.
+
+Privacy: requests carry only an anonymous plugin `User-Agent` (see [Attribution](#attribution))
+and no end-user identifiers. Support: [developer@aisa.one](mailto:developer@aisa.one) or
+[GitHub Issues](https://github.com/AIsa-public/AIsa-plugins/issues).
 
 ## Requirements
 
@@ -19,12 +23,18 @@ the MCP server is first used.
 
    ```bash
    mkdir -p ~/.cursor/plugins/local
+   rm -rf ~/.cursor/plugins/local/aisa-tools
    cp -R plugins/aisa-tools ~/.cursor/plugins/local/aisa-tools
    ```
 
    From a clone of this repository the path above is relative to the repo root. The
+   `rm -rf` makes re-running safe: without it, `cp -R` into an existing directory
+   nests a second copy at `~/.cursor/plugins/local/aisa-tools/aisa-tools`. The
    install root must be exactly `~/.cursor/plugins/local/aisa-tools` with
-   `.cursor-plugin/plugin.json` directly under it (not nested one level deeper).
+   `.cursor-plugin/plugin.json` directly under it.
+
+   If `aisa-tools` is already installed from the Marketplace, the Marketplace copy may
+   take precedence over the local one — uninstall it first when testing local changes.
 
 2. Restart Cursor, or run **Developer: Reload Window**.
 
@@ -74,6 +84,12 @@ aisa-aisa-tools-cursor-plugin/<version> (+https://github.com/AIsa-public/AIsa-pl
 assert the exact token.
 
 ## Offline tests
+
+The tests read `plugin.aisa.yaml` and need PyYAML:
+
+```bash
+pip install pyyaml
+```
 
 From the repository root (or from this directory with the paths adjusted):
 

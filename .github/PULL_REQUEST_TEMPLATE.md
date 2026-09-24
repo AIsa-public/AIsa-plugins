@@ -9,7 +9,7 @@ Closes #
 ## Scope
 
 - Plugin(s):
-- Host(s): <!-- claude-code / codex / dify / … -->
+- Host(s): <!-- claude-code / codex / dify / cursor / … -->
 - Language profile(s): <!-- python / … -->
 
 ## Type of change

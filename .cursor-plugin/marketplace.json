@@ -12,6 +12,7 @@
       "name": "aisa-tools",
       "source": "./plugins/aisa-tools",
       "description": "Connect to the AIsa Tool Router MCP (Streamable HTTP + OAuth) for search, data, and productivity tools.",
+      "logo": "plugins/aisa-tools/assets/logo.png",
       "category": "integrations",
       "tags": ["aisa", "mcp", "tools"]
     }

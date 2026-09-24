@@ -11,7 +11,6 @@
   "repository": "https://github.com/AIsa-public/AIsa-plugins",
   "license": "MIT",
   "keywords": ["aisa", "mcp", "tools", "oauth", "tool-router"],
-  "category": "integrations",
-  "tags": ["aisa", "mcp", "tools"],
+  "logo": "assets/logo.png",
   "mcpServers": "./mcp.json"
 }
