@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "aisa-tools": {
+      "type": "http",
+      "url": "https://tools.aisa.one/mcp",
+      "headers": {
+        "User-Agent": "aisa-aisa-tools-cursor-plugin/0.1.0 (+https://github.com/AIsa-public/AIsa-plugins)"
+      }
+    }
+  }
+}
