@@ -64,6 +64,29 @@ class AisaToolsManifestTests(unittest.TestCase):
         self.assertEqual(len(entries), 1)
         self.assertEqual(entries[0]["source"], "./plugins/aisa-tools")
 
+    def test_aisa_skill_frontmatter_and_workflow(self) -> None:
+        skill_dir = PLUGIN_ROOT / "skills" / "aisa"
+        text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        match = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
+        self.assertIsNotNone(match, "SKILL.md needs YAML frontmatter")
+        front = yaml.safe_load(match.group(1))
+        self.assertEqual(front["name"], "aisa")
+        self.assertEqual(front["name"], skill_dir.name)
+        self.assertTrue(front.get("description"))
+        for tool in (
+            "AISA_SEARCH_TOOL",
+            "AISA_BATCH_GET_SCHEMA",
+            "AISA_BATCH_QUOTE",
+            "AISA_BATCH_USE",
+        ):
+            self.assertIn(tool, text)
+        self.assertIn(MCP_URL, text)
+        self.assertIn("AIsa-team/agent-skills", text)
+        # The plugin already registers the MCP server; the skill must not push CLI installs.
+        self.assertNotIn("npm install", text)
+        self.assertNotIn("npx", text)
+        self.assertIn("MIT License", (skill_dir / "LICENSE").read_text(encoding="utf-8"))
+
     def test_readme_documents_local_and_marketplace(self) -> None:
         readme = (PLUGIN_ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("~/.cursor/plugins/local", readme)

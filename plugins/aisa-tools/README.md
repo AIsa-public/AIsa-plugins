@@ -56,6 +56,12 @@ under Dashboard → Settings → Security & Identity → Marketplace and Plugins
 Cursor reviews marketplace submissions manually. Do not claim an official featured
 listing unless Cursor grants one.
 
+## Skills
+
+- [`skills/aisa`](skills/aisa/SKILL.md) guides the agent through the Tool Router
+  search → schema → quote → call workflow over this plugin's MCP server. Adapted from
+  [AIsa-team/agent-skills](https://github.com/AIsa-team/agent-skills) (MIT).
+
 ## MCP endpoint
 
 ```json
